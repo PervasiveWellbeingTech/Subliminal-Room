@@ -1,11 +1,13 @@
+import sys
+sys.path.insert(0, '/Users/kaandonbekci/dev/pervasivetech/Room')
+
 from phue import Bridge
 import random
 import time
 import librosa
-import sys
 import pygame as pg
 import os
-
+from rgbxy import Converter
 # SETUP
 file_name = "heartbeat.mp3"
 # bridge_ip = "192.168.1.3"
@@ -18,7 +20,6 @@ HIGH = 255
 BRIGHTNESS = .99
 delta = .05
 DEFAULT_VOLUME = .02 #at max volume on laptop + subpac, .02 feels feint
-
 
 def play_music(music_file, beat_times, tempo, volume=DEFAULT_VOLUME):
     freq = 44100     # audio CD quality
@@ -115,17 +116,29 @@ def initialize_lights():
     left.brightness = right.brightness = back.brightness = 255
     left.colortemp = right.colortemp = back.colortemp = temp
 
+converter = Converter()
+converter.rgb_to_xy(255, 0, 0)
 b = Bridge(bridge_ip)
-lights = b.get_light_objects("name")
-left = lights["left"]
-right = lights["right"]
-back = lights["back"]
-clock = None
-initialize_lights()
+lights = b.get_light_objects()
+for light in lights:
+    light.on = True
+    light.xy = converter.rgb_to_xy(255, 0, 0)
+    time.sleep(.5)
+    light.xy = converter.rgb_to_xy(0, 255, 0)
+    time.sleep(.5)
+    light.xy = converter.rgb_to_xy(0, 0, 255)
+    time.sleep(.5)
+    light.on = False
+
+# left = lights[0]
+# right = lights[1]
+# back = lights[2]
+# clock = None
+# initialize_lights()
 # exit()
-beat_times, tempo = beat_track(file_name)
-play_music(file_name, beat_times, tempo)
-print("done!")
+# beat_times, tempo = beat_track(file_name)
+# play_music(file_name, beat_times, tempo)
+# print("done!")
 
 
 

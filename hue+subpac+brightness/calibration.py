@@ -7,22 +7,22 @@ import pygame as pg
 import os
 
 # SETUP
-file_name = "heartbeat.mp3"
-# bridge_ip = "192.168.1.3"
-bridge_ip = "128.12.141.85"
-
+# file_name = "rondo-alla-turca.mp3"
+bridge_ip = "192.168.1.3"
 hue_delay = 200
 temp = 155
 LOW = 180
 HIGH = 255
 BRIGHTNESS = .99
 delta = .05
-DEFAULT_VOLUME = .02 #at max volume on laptop + subpac, .02 feels feint
+DEFAULT_VOLUME = 1
+
+
 
 
 def play_music(music_file, beat_times, tempo, volume=DEFAULT_VOLUME):
-    freq = 44100     # audio CD quality
-    # freq = 20000 # changing this will make it slower/faster
+    # freq = 44100     # audio CD quality
+    freq = 20000 # changing this will make it slower/faster
     bitsize = -16    # unsigned 16 bit
     channels = 2     # 1 is mono, 2 is stereo
     buffer = 2048    # number of samples (experiment to get best sound)
@@ -121,12 +121,17 @@ left = lights["left"]
 right = lights["right"]
 back = lights["back"]
 clock = None
-initialize_lights()
-# exit()
-beat_times, tempo = beat_track(file_name)
-play_music(file_name, beat_times, tempo)
-print("done!")
+# initialize_lights()
+while True:
+    print('hue: ' + str(left.hue))
+    print('xy: ' + str(left.xy))
+    print('temp: ' + str(left.colortemp))
+    time.sleep(2)
 
+# exit()
+# beat_times, tempo = beat_track(file_name)
+# play_music(file_name, beat_times, tempo)
+print("done!")
 
 
 # INTERVENTION_SPEED = 1
