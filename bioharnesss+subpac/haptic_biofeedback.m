@@ -5,20 +5,27 @@ delete(instrfindall);
 
 %%%%%%%%%%%%%%%%%%%%%%    global   %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%  Robert's setup   %%%%%%%%%%%%%%%%%%%
- bh_port = 'COM8';
+% bh_port = 'COM8';
 % qs_port = 'COM4';
 % haptic_port = 'COM6';
 % accel_port = 'COM16';
 % plot_time = 60;  %	how many seconds of data the plots display
 
 %%%%%%%%%%%%%%%%%  Robert's setup  %%%%%%%%%%%%%%%%%%%
-bh_remote_name = 'BH BHT023730';
+%bh_remote_name = 'BH BHT023730';
 %bh_port = '/dev/cu.BHBHT023730-iSerialPort1';
+%qs_port = '/dev/tty.AffectivaQ-v2-D9B8-SPP';
+%haptic_port = '/dev/tty.usbmodem1411';
+%accel_port = '/dev/tty.wchusbserial1420';
+%plot_time = 60;  %	how many seconds of data the plots display
+
+%%%%%%%%%%%%%%%%%  Kaan's setup  %%%%%%%%%%%%%%%%%%%
+bh_port = 'COM5';
+bh_remote_name = 'BH BHT022509';
 qs_port = '/dev/tty.AffectivaQ-v2-D9B8-SPP';
 haptic_port = '/dev/tty.usbmodem1411';
 accel_port = '/dev/tty.wchusbserial1420';
 plot_time = 60;  %	how many seconds of data the plots display
-
 
 % bioharness connection and packet stream
 bh_conn=[];
@@ -388,6 +395,7 @@ disp('start');
             try
                 fopen(bh_conn);
             catch e
+                e
                 fclose(bh_conn);
 				delete(bh_conn);
                 set (hStatus, 'String', 'Error opening bioharness data stream.');
