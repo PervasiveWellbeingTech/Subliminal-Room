@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(0, '/Users/kaandonbekci/dev/pervasivetech/Room')
-
+import oscilliate_lights as oscilliate
 from phue import Bridge
 import random
 import time
@@ -8,10 +8,11 @@ import librosa
 import pygame as pg
 import os
 from rgbxy import Converter
+exit()
 # SETUP
-file_name = "heartbeat.mp3"
-# bridge_ip = "192.168.1.3"
-bridge_ip = "128.12.141.85"
+file_name = "audio/heartbeat.mp3"
+bridge_ip = "192.168.1.2"
+# bridge_ip = "128.12.141.85"
 
 hue_delay = 200
 temp = 155
