@@ -14,8 +14,8 @@ b = Bridge(bridge_ip)
 lights = b.get_light_objects()
 reset.reset(lights, [255, 255, 255], 255)
 up = True
-input = input('name of the file? \n')
-audio_file = 'audio/'+input
+# input = input('name of the file? \n')
+audio_file = 'audio/heartbeat.mp3'
 mixer.init()
 mixer.music.load(audio_file)
 
@@ -27,23 +27,23 @@ osc.OPTIONS = {
 'dg': 0,
 'db': 0,
 'ddr': 0,
-'ddg': 0,
-'ddb': 0,
+'ddg': -1,
+'ddb': -4,
 'brightness': 225,
 'dbrightness': 15,
-'ddbrightness': -5
+'ddbrightness': -3
 }
 
 osc.TARGET = {
 'r': 255,
-'g': 255,
-'b': 255,
-'brightness': 50,
-'enabled': False,
+'g': 190,
+'b': 50,
+'brightness': 80,
+'enabled': True,
 'reached': False
 }
 
-osc.MODE = osc.MODES['BRIGHTNESS']
+osc.MODE = osc.MODES['BRIGHTNESS+COLOR']
 beat_table, tempo = trck.track_beats(audio_file)
 counter = 0
 DELAY_PER_CALL = .105 #seconds
@@ -56,7 +56,7 @@ clock = pgtime.Clock()
 offset = pgtime.get_ticks()
 
 while not osc.TARGET['reached']:
-    if (pgtime.get_ticks() - offset + DELAY_PER_CALL)/1000>= beat_table[counter]:
+    if (pgtime.get_ticks() - offset + THRESHOLD)/1000>= beat_table[counter]:
         counter += 1
         for light in lights:
             osc.oscilliate(light, up)
