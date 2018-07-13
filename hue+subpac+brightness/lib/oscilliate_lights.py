@@ -1,8 +1,7 @@
 # TODO: update TARGET['reached']
-
+# TODO: migrate this to oscilliate_groups and make this for individual lights
 # from phue import Bridge
 import sys
-sys.path.insert(0, '/Users/kaandonbekci/dev/pervasivetech/Room')
 from rgbxy import Converter
 # import time
 

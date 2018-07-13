@@ -1,5 +1,5 @@
-# Hue lights + Subpac + Heartbeat
-
+# Hue lights + Subpac + generated Heartbeat
+import libs
 from phue import Bridge
 import time
 import sys
@@ -14,7 +14,6 @@ pgtime = pg.time
 bridge_ip = '192.168.1.2'
 b = Bridge(bridge_ip)
 lights = b.get_light_objects()
-reset.reset(lights, [255, 255, 255], 255)
 up = True
 # input = input('name of the file? \n')
 # mixer.pre_init(44100, 16, 2, 4096)
@@ -47,7 +46,10 @@ osc.TARGET = {
 }
 
 osc.MODE = osc.MODES['BRIGHTNESS+COLOR']
-bpm = 80
+
+reset.reset(lights, osc.OPTIONS)
+
+bpm = 60
 # counter = 0
 # DELAY_PER_CALL = .105 #seconds
 # THRESHOLD = 50

@@ -1,5 +1,6 @@
-# Hue lights + Subpac + Heartbeat
-
+# Hue lights + Subpac + beat from audiofile
+# XXX: NOT GOOD
+import libs
 from phue import Bridge
 import time
 import sys
@@ -12,10 +13,9 @@ from pygame import time as pgtime
 bridge_ip = '192.168.1.2'
 b = Bridge(bridge_ip)
 lights = b.get_light_objects()
-reset.reset(lights, [255, 255, 255], 255)
 up = True
 # input = input('name of the file? \n')
-audio_file = 'audio/heartbeat.mp3'
+audio_file = '../audio/heartbeat.mp3'
 mixer.init()
 mixer.music.load(audio_file)
 
@@ -44,6 +44,7 @@ osc.TARGET = {
 }
 
 osc.MODE = osc.MODES['BRIGHTNESS+COLOR']
+reset.reset(lights, osc.OPTIONS)
 beat_table, tempo = trck.track_beats(audio_file)
 counter = 0
 DELAY_PER_CALL = .105 #seconds

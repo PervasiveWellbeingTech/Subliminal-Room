@@ -1,5 +1,5 @@
 # Screen brightness + Hue lights
-
+import libs
 from phue import Bridge
 import time
 import sys
@@ -10,7 +10,6 @@ import screen_brightness as screen
 bridge_ip = '192.168.1.2'
 b = Bridge(bridge_ip)
 lights = b.get_light_objects()
-reset.reset(lights, [255, 255, 255], 255)
 up = True
 delay_mode = 'BREATHING'
 osc.OPTIONS = {
@@ -23,15 +22,10 @@ osc.OPTIONS = {
 'ddr': 0,
 'ddg': -2,
 'ddb': -6,
-'brightness': 245,
-'dbrightness': 10,
+'brightness': 240,
+'dbrightness': 15,
 'ddbrightness': -5
 }
-dsb = osc.OPTIONS['dbrightness']/255 * 2/3
-ddsb = osc.OPTIONS['ddbrightness']/255 * 2/3
-screen_brightness = osc.OPTIONS['brightness']/255
-screen.reset(screen_brightness)
-
 
 osc.TARGET = {
 'r': 255,
@@ -43,6 +37,18 @@ osc.TARGET = {
 }
 
 osc.MODE = osc.MODES['BRIGHTNESS']
+
+dsb = osc.OPTIONS['dbrightness']/255 * 1/3
+ddsb = osc.OPTIONS['ddbrightness']/255 * 2/3
+screen_brightness = osc.OPTIONS['brightness']/255
+
+screen_brightness = .91
+dsb = .09
+ddsb = -.005
+target = .7
+screen.reset(screen_brightness)
+reset.reset(lights, osc.OPTIONS)
+
 while not osc.TARGET['reached']:
     if up:
         sys.stdout.write('↑ ')

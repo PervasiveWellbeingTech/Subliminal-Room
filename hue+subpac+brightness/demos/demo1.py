@@ -1,45 +1,49 @@
-# Changing Hue colors with target
-
+# Changing Hue Brightness with target
+import libs
+import sys
 from phue import Bridge
 import time
-import sys
 import oscilliate_lights as osc
 import reset_lights as reset
-
-
+# from tkinter import *
+# from tkinter import messagebox
+#
+# messagebox.showwarning("Say Hello", "Hello World")
 bridge_ip = '192.168.1.2'
 b = Bridge(bridge_ip)
 lights = b.get_light_objects()
-reset.reset(lights, [255, 255, 255], 150)
 up = True
 delay_mode = 'BREATHING'
 
 osc.OPTIONS = {
 'r': 255,
-'g': 255,
-'b': 255,
+'g': 200,
+'b': 120,
 'dr': 0,
-'dg': 5,
-'db': 5,
+'dg': 0,
+'db': 0,
 'ddr': 0,
-'ddg': -2,
-'ddb': -6,
-'brightness': 150,
-'dbrightness': 0,
-'ddbrightness': 0
+'ddg': 0,
+'ddb': 0,
+'brightness': 215,
+'dbrightness': 15,
+'ddbrightness': -5
 }
 
 osc.TARGET = {
 'r': 255,
-'g': 200,
-'b': 104,
+'g': 255,
+'b': 255,
 'brightness': 150,
 'enabled': True,
 'reached': False
 }
 
-osc.MODE = osc.MODES['COLOR']
-while not osc.TARGET['reached']:
+osc.MODE = osc.MODES['BRIGHTNESS']
+
+reset.reset(lights, osc.OPTIONS)
+
+while True:
     if up:
         sys.stdout.write('↑ ')
     else:
