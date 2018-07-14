@@ -9,7 +9,9 @@ import reset_lights as reset
 # from tkinter import messagebox
 #
 # messagebox.showwarning("Say Hello", "Hello World")
-bridge_ip = '192.168.1.2'
+# bridge_ip = '192.168.1.2'
+bridge_ip = "128.12.141.85"
+
 b = Bridge(bridge_ip)
 lights = b.get_light_objects()
 up = True
@@ -26,7 +28,7 @@ osc.OPTIONS = {
 'ddg': 0,
 'ddb': 0,
 'brightness': 215,
-'dbrightness': 15,
+'dbrightness': 20,
 'ddbrightness': -5
 }
 
