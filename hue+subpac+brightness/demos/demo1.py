@@ -29,7 +29,7 @@ osc.OPTIONS = {
 'ddb': 0,
 'brightness': 215,
 'dbrightness': 20,
-'ddbrightness': -5
+'ddbrightness': 0
 }
 
 osc.TARGET = {
