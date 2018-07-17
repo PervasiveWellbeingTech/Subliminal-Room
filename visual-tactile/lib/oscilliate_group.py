@@ -198,27 +198,6 @@ def updateOptions():
         print('not supported MODE, check dictionary MODEs in "oscilliate-groups.py".')
         exit()
 
-# def test():
-#     b = Bridge(bridge_ip)
-#     converter = Converter()
-#     groups = b.get_group_objects()
-#     up = True
-#     while True:
-#         if up:
-#         else:
-#             time.sleep(DOWN_DELAY)
-#         sys.stdout.flush()
-#         for group in groups:
-#             oscilliate(group, up)
-#             # print(group.xy)
-#             # print(group.brightness)
-#         up = not up
-#         if up: #after up, up is not up and DOWN_DELAY is needed
-#             time.sleep(DOWN_DELAY)
-#         else:
-#             time.sleep(UP_DELAY)
-#             updateOptions()
-#         # print(OPTIONS)
 
 # def test():
 #     converter = Converter()
