@@ -14,3 +14,8 @@ def reset(lights, options):
         light.xy = converter.rgb_to_xy(options['r'], options['g'], options['b'])
         light.brightness = options['brightness']
     print("resetted lights: color: R:{}, G:{}, B:{}, Brightness: {}.".format(options['r'], options['g'], options['b'], options['brightness']))
+
+def reset_group(group, options):
+    group.xy = converter.rgb_to_xy(options['r'], options['g'], options['b'])
+    group.brightness = options['brightness']
+    print("resetted group {}: color: R:{}, G:{}, B:{}, Brightness: {}.".format(group.name, options['r'], options['g'], options['b'], options['brightness']))
