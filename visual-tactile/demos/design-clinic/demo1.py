@@ -4,7 +4,7 @@ import sys
 from phue import Bridge
 import time
 import oscilliate_lights as osc
-import reset_lights as reset
+import reset
 # from tkinter import *
 # from tkinter import messagebox
 #

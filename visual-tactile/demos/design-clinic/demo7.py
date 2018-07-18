@@ -9,7 +9,7 @@ from pygame import time as pgtime
 import math
 from phue import Bridge
 import oscilliate_lights as osc
-import reset_lights as reset
+import reset
 
 bridge_ip = '192.168.1.2'
 b = Bridge(bridge_ip)

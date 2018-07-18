@@ -4,7 +4,7 @@ from phue import Bridge
 import time
 import sys
 import oscilliate_lights as osc
-import reset_lights as reset
+import reset
 import screen_brightness as screen
 
 bridge_ip = '192.168.1.2'

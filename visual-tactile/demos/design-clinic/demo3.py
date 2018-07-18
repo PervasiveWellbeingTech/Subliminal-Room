@@ -5,7 +5,7 @@ from phue import Bridge
 import time
 import sys
 import oscilliate_lights as osc
-import reset_lights as reset
+import reset
 import track_beats as trck
 from pygame import mixer
 from pygame import time as pgtime
