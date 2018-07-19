@@ -97,14 +97,14 @@ def change_state(fan_volume=None, box_status=None, fan_speeds=[None,None,None,No
     'fan_active': fan_states[3] if fan_states[3] is not None else STATE['settings_slot3']['fan_active']
     }}
     r = requests.post(BASE_URL+'/boxes', json=payload, headers=AUTH_HEADER)
-    print(r.json())
     STATE = payload
     # print(payload)
 
+
 def test():
     init('kdonbekci@gmail.com', 'Donbek2003')
-    # change_state(fan_volume=100, box_status=1, fan_speeds=[0,100,0,0], fan_states=[False,True,False,False])
-    time.sleep(3)
+    change_state(fan_volume=80, box_status=1, fan_speeds=[0,0,50,0], fan_states=[False,False,True,False])
+    # time.sleep(3)
     # change_state(box_status=0)
-    
+
 test()
