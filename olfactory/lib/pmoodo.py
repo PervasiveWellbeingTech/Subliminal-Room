@@ -1,5 +1,5 @@
 import requests
-import time
+# import time
 
 BASE_URL = 'https://rest.moodo.co/api'
 AUTH_HEADER = None
@@ -98,13 +98,11 @@ def change_state(fan_volume=None, box_status=None, fan_speeds=[None,None,None,No
     }}
     r = requests.post(BASE_URL+'/boxes', json=payload, headers=AUTH_HEADER)
     STATE = payload
-    # print(payload)
-
 
 def test():
     init('kdonbekci@gmail.com', 'Donbek2003')
-    change_state(fan_volume=80, box_status=1, fan_speeds=[0,0,50,0], fan_states=[False,False,True,False])
+    change_state(fan_volume=80, box_status=1, fan_speeds=[0,50,0,0], fan_states=[False,True,False,False])
     # time.sleep(3)
     # change_state(box_status=0)
 
-test()
+# test()
