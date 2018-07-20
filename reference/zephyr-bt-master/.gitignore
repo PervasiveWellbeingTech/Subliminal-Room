@@ -1,7 +1,0 @@
-/.project
-/.pydevproject
-*.pyc
-*~
-*.egg-info
-build/
-dist/
