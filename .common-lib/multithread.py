@@ -1,14 +1,7 @@
 import threading
 import time
-import random
+# import random
 from collections import deque
-# TYPES = {
-# 'AUDIOTORY': 1,
-# 'OLFACTORY': 2,
-# 'TACTILE': 3,
-# 'VISUAL': 4,
-# 'MONITOR': 5
-# }
 
 class Intervention(threading.Thread):
     def __init__(self, type, no, funcs, delay = None, delayFunc = None):
@@ -28,26 +21,31 @@ class Intervention(threading.Thread):
             if self.delay is not None:
                 delayFunc(delay)
 
-def getTime(thread):
-    print("{} sleeps at {}".format(thread.name,
-        time.strftime("%H:%M:%S", time.gmtime())))
-    randSleepTime = random.randint(1, 5)
-    time.sleep(2)
-    print("{} wakes at {}".format(thread.name,
-        time.strftime("%H:%M:%S", time.gmtime())))
-def makeCoffee(thread):
-    print("{} is making coffe at {}".format(thread.name,
-        time.strftime("%H:%M:%S", time.gmtime())))
-    randSleepTime = random.randint(1, 5)
-    time.sleep(2)
-    print("{} sips the coffe, yummy at {}".format(thread.name,
-        time.strftime("%H:%M:%S", time.gmtime())))
-def test():
-    funcs = [getTime, makeCoffee]
-    thread1 = Intervention('AUDIOTORY', 1, funcs)
-    thread2 = Intervention('VISUAL', 1, funcs)
-    thread3 = Intervention('OLFACTORY', 1, funcs)
-    thread1.start()
-    thread2.start()
-    thread3.start()
-test()
+# def getTime(thread):
+#     print("{} sleeps at {}".format(thread.name,
+#         time.strftime("%H:%M:%S", time.gmtime())))
+#     randSleepTime = random.randint(1, 5)
+#     time.sleep(randSleepTime)
+#     print("{} wakes at {}".format(thread.name,
+#         time.strftime("%H:%M:%S", time.gmtime())))
+# def makeCoffee(thread):
+#     print("{} is making coffe at {}".format(thread.name,
+#         time.strftime("%H:%M:%S", time.gmtime())))
+#     randSleepTime = random.randint(1, 5)
+#     time.sleep(randSleepTime)
+#     print("{} sips the coffe, yummy at {}".format(thread.name,
+#         time.strftime("%H:%M:%S", time.gmtime())))
+# def test():
+#     funcs = [getTime, makeCoffee]
+#     thread1 = Intervention('AUDIOTORY', 1, funcs)
+#     thread2 = Intervention('VISUAL', 1, funcs)
+#     thread3 = Intervention('OLFACTORY', 1, funcs)
+#     thread1.start()
+#     thread2.start()
+#     thread3.start()
+#     time.sleep(10)
+#     thread1.funcs.appendleft(None)
+#     thread2.funcs.appendleft(None)
+#     thread3.funcs.appendleft(None)
+
+# test()
