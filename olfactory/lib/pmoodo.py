@@ -1,5 +1,6 @@
 import requests
-# import time
+import time
+# import json
 
 BASE_URL = 'https://rest.moodo.co/api'
 AUTH_HEADER = None
@@ -28,7 +29,9 @@ STATE = {
 def login(email, password):
     payload = {'email': email, 'password':password}
     r = requests.post(BASE_URL+'/login', json=payload)
+    # print(r)
     token = r.json()['token']
+    # print(r.json())
     if token:
         global AUTH_HEADER
         AUTH_HEADER = {'token': str(token)}
@@ -65,7 +68,7 @@ def init(email, password, name=None):
     print('Connected and resetted moodo device.')
 
 def reset():
-    change_state(fan_volume=0, box_status=0, fan_speeds=[0,0,0,0], fan_states=[False,False,False,False])
+    change_state(fan_volume=0, box_status=1, fan_speeds=[0,0,0,0], fan_states=[False,False,False,False])
 
 def power_off():
     r = requests.delete(BASE_URL+'/boxes/'+str(DEVICE_KEY), headers=AUTH_HEADER)
@@ -96,13 +99,26 @@ def change_state(fan_volume=None, box_status=None, fan_speeds=[None,None,None,No
     'fan_speed': fan_speeds[3] if fan_speeds[3] is not None else STATE['settings_slot3']['fan_speed'],
     'fan_active': fan_states[3] if fan_states[3] is not None else STATE['settings_slot3']['fan_active']
     }}
+    # print(json.dumps(payload))
+    # print(payload)
     r = requests.post(BASE_URL+'/boxes', json=payload, headers=AUTH_HEADER)
+    # print(r.json())
     STATE = payload
 
 def test():
     init('kdonbekci@gmail.com', 'Donbek2003')
-    change_state(fan_volume=80, box_status=1, fan_speeds=[0,50,0,0], fan_states=[False,True,False,False])
-    # time.sleep(3)
-    # change_state(box_status=0)
+    change_state(fan_volume=80, box_status=1, fan_speeds=[0,0,0,0], fan_states=[True,False,False,False])
+    print(get_state())
+    time.sleep(3)
+    change_state(fan_volume=80, box_status=1, fan_speeds=[0,0,0,0], fan_states=[False,True,False,False])
+    time.sleep(3)
+    change_state(fan_volume=80, box_status=1, fan_speeds=[0,0,0,0], fan_states=[False,False,True,False])
+    time.sleep(3)
+    change_state(fan_volume=80, box_status=1, fan_speeds=[0,0,0,0], fan_states=[False,False,False,True])
+    print('a')
+    # change_state(fan_speeds=[100,0,100,0], fan_states=[True,False,True,False])
+    # time.sleep(5)
+    print('b')
+    # change_state(fan_speeds=[50,0,50,0], fan_states=[True,False,True,False])
 
 # test()
