@@ -2,7 +2,7 @@ from rgbxy import Converter
 from phue import Bridge, Group
 
 bridge_ip = '192.168.1.2'
-converter = Converter()
+converter = None
 DEFAULT_TRANSITION = None
 COMMAND_TEMPLATE = {
 'R': 255,
@@ -11,6 +11,8 @@ COMMAND_TEMPLATE = {
 'BRIGHTNESS': 255,
 'TRANSITION': -1 #0 is continue
 }
+b = None
+group = None
 
 def set_group(group, command):
     if command['TRANSITION'] != 0:
@@ -32,6 +34,12 @@ def make_command(r, g, b, brightness = 255, transition = 0):
     'TRANSITION': transition #0 is default
     }
     return command
+
+def init():
+    global converter, b, group
+    converter = Converter()
+    b = Bridge(bridge_ip)
+    group = Group(b, 1)
 
 # def test():
 #     converter = Converter()
