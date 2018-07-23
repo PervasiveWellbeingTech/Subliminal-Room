@@ -5,5 +5,5 @@ import oscilliate_group as oscilliate
 import reset
 
 hue.init()
-
-hue.group.on = True
+cmd = hue.make_command(255, 240, 230, 255, 5)
+hue.set_group(hue.group, cmd)

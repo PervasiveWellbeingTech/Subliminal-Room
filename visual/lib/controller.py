@@ -1,4 +1,4 @@
-from rgbxy import Converter
+from rgbxy import Converter, GamutC
 from phue import Bridge, Group
 
 bridge_ip = '192.168.1.2'
@@ -37,26 +37,23 @@ def make_command(r, g, b, brightness = 255, transition = 0):
 
 def init():
     global converter, b, group
-    converter = Converter()
+    converter = Converter(GamutC)
     b = Bridge(bridge_ip)
     group = Group(b, 1)
 
-# def test():
-#     converter = Converter()
-#     b = Bridge(bridge_ip)
-#     # print(b.get_group()['1'])
-#     g1 = Group(b, 1)
-#     print(g1)
-#     # g1.on = True
-#     # print(g1.transitiontime)
-#     cmds = []
-#     cmds.append(make_command(255, 255, 255, 255, 1))
-#     cmds.append(make_command(255, 0, 0))
-#     cmds.append(make_command(0, 255, 0))
-#     cmds.append(make_command(0, 0, 255))
-#     i = 0
-#     while True:
-#         set_group(g1, cmds[i%3])
-#         i += 1
-#         print(i)
+def test():
+    init()
+    print(group)
+    # g1.on = True
+    # print(g1.transitiontime)
+    cmds = []
+    cmds.append(make_command(255, 255, 255, 255, 1))
+    cmds.append(make_command(255, 0, 0))
+    cmds.append(make_command(0, 255, 0))
+    cmds.append(make_command(0, 0, 255))
+    i = 0
+    while True:
+        set_group(group, cmds[i%3])
+        i += 1
+        print(i)
 # test()
