@@ -16,8 +16,6 @@ DELAYS = {
 "NEUTRAL": [1.5, 1.5],
 "FAST": [.5, .5]
 }
-UP = 0
-DOWN = 1
 MODE = MODES['BRIGHTNESS']
 OPTIONS = {
 'r': 255,
@@ -51,15 +49,13 @@ converter = Converter()
 # bridge_ip = "192.168.1.2"
 # bridge_ip = "128.12.141.85"
 
-def oscilliate(group, up):
+def oscilliate(group, up, options = OPTIONS):
     if up:
-        up = False
-        return oscilliateUp(group)
+        return oscilliateUp(group, options)
     else:
-        up = True
-        return oscilliateDown(group)
+        return oscilliateDown(group, options)
 
-def oscilliateUp(group):
+def oscilliateUp(group, options):
     if MODE == MODES['COLOR']:
         group.xy = converter.rgb_to_xy(OPTIONS['r'] + OPTIONS['dr'], OPTIONS['g'] + OPTIONS['dg'], OPTIONS['b'] + OPTIONS['db'])
     elif MODE == MODES['BRIGHTNESS']:
@@ -71,7 +67,7 @@ def oscilliateUp(group):
         print('not supported MODE, check dictionary MODEs in "oscilliate-groups.py".')
         exit()
 
-def oscilliateDown(group):
+def oscilliateDown(group, options):
     if MODE == MODES['COLOR']:
         group.xy = converter.rgb_to_xy(OPTIONS['r'] - OPTIONS['dr'], OPTIONS['g'] - OPTIONS['dg'], OPTIONS['b'] - OPTIONS['db'])
     elif MODE == MODES['BRIGHTNESS']:
