@@ -7,7 +7,7 @@ class Intervention(threading.Thread):
     def __init__(self, type, no, funcs, args, delay = None, delayFunc = None):
         if len(args) is not len(funcs):
             if len(args) + 1 is not len(funcs) or funcs[len(funcs)-1] is not None:
-                print('{}_{} cannot be initiated, wrong number of funcs and params'.format(type, str(no)))
+                print('{}_{} cannot be initiated, wrong number of funcs and params.'.format(type, str(no)))
                 return
         threading.Thread.__init__(self)
         self.name = type+'_'+str(no)
@@ -18,8 +18,9 @@ class Intervention(threading.Thread):
         # self.funcs = funcs
         # self.len = self.funcs(len)
         [self.funcs.append(i) for i in funcs]
-        [self.args.append(i) for i in arg]
+        [self.args.append(i) for i in args]
         # print(self.funcs)
+        # print(self.args)
 
     def run(self):
         index = 0
