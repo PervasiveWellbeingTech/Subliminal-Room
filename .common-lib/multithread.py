@@ -18,7 +18,7 @@ class Intervention(threading.Thread):
         # self.funcs = funcs
         # self.len = self.funcs(len)
         [self.funcs.append(i) for i in funcs]
-        [self.funcs.append(i) for i in arg]
+        [self.args.append(i) for i in arg]
         # print(self.funcs)
 
     def run(self):
