@@ -12,6 +12,18 @@ COMMAND_TEMPLATE = {
 }
 b = None
 group = None
+go = None
+
+def set_light(command, hlight = None):
+    if hlight is None:
+        hlight = go
+    if command['TRANSITION'] != 0:
+        if command['TRANSITION'] > 0:
+            hlight.transitiontime = command['TRANSITION']
+        else:
+            hlight.transitiontime = DEFAULT_TRANSITION
+    hlight.xy = converter.rgb_to_xy(command['R'], command['G'], command['B'])
+    hlight.brightness = command['BRIGHTNESS']
 
 def set_group(command, hgroup = None):
     if hgroup is None:
@@ -26,7 +38,6 @@ def set_group(command, hgroup = None):
     hgroup.xy = converter.rgb_to_xy(command['R'], command['G'], command['B'])
     hgroup.brightness = command['BRIGHTNESS']
 
-# def set_light(light, command):
 
 def make_command(r, g, b, brightness = 255, transition = 0):
     command = {
@@ -40,25 +51,28 @@ def make_command(r, g, b, brightness = 255, transition = 0):
 
 def init(bridge_ip = '192.168.1.2', gamut = GamutC):
     # print(bridge_ip)
-    global converter, b, group
+    global converter, b, group, go
     converter = Converter(gamut)
     b = Bridge(bridge_ip)
     # print(b)
     group = Group(b, 1)
+    # go = Group(b, 2)
+    go = b['portable']
+    # print(go)
     # print(group)
 
-def test():
-    init()
-    # g1.on = True
-    # print(g1.transitiontime)
-    cmds = []
-    cmds.append(make_command(255, 230, 240, 255, 1))
-    cmds.append(make_command(255, 0, 0))
-    cmds.append(make_command(0, 255, 0))
-    cmds.append(make_command(0, 0, 255))
-    i = 0
-    while True:
-        set_group(group, cmds[i%3])
-        i += 1
-        print(i)
+# def test():
+#     init()
+#     # g1.on = True
+#     # print(g1.transitiontime)
+#     cmds = []
+#     cmds.append(make_command(255, 230, 240, 255, 1))
+#     cmds.append(make_command(255, 0, 0))
+#     cmds.append(make_command(0, 255, 0))
+#     cmds.append(make_command(0, 0, 255))
+#     i = 0
+#     while True:
+#         set_group(cmds[i%3], group)
+#         i += 1
+#         print(i)
 # test()

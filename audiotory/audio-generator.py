@@ -1,10 +1,12 @@
 import libs
 from wavebender import *
+import math
 
-channels = ((sine_wave(a = .4, frequency = 501.0, amplitude=.5),),
-            (sine_wave(a = .4, frequency = 502.0, amplitude=1),))
+amp = [math.sin, 1.0, .5, .5]
 
+channels = ((sine_wave(a = 1, frequency = 100.0, amplitude=amp),),
+            (sine_wave(a = 1, frequency = 100.0, amplitude=amp),))
 
 samples = compute_samples(channels, 1000000)
 
-write_wavefile('./audio/test.wav', samples)
+write_wavefile('/Users/kaandonbekci/dev/pervasivetech/Room/audiotory/audio/test.wav',samples)

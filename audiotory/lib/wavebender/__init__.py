@@ -42,16 +42,40 @@ def grouper(n, iterable, fillvalue=None):
     args = [iter(iterable)] * n
     return zip_longest(fillvalue=fillvalue, *args)
 
+def abs_sine_wave(a = 1, frequency=440.0, framerate=44100, amplitude=0.5,
+        skip_frame=0):
+    '''
+    Generate a sine wave at a given frequency of infinite length.
+    '''
+    if type(amplitude) is not int:
+        print(type(amplitude))
+    else:
+        if amplitude > 1.0: amplitude = 1.0
+        if amplitude < 0.0: amplitude = 0.0
+        amplitude = amplitude/2
+        for i in count(skip_frame):
+            sine = math.sin(a * 2.0 * math.pi * float(frequency) * (float(i) / float(framerate)))
+            yield (float(amplitude) * sine) + amplitude
+
 def sine_wave(a = 1, frequency=440.0, framerate=44100, amplitude=0.5,
         skip_frame=0):
     '''
     Generate a sine wave at a given frequency of infinite length.
     '''
-    if amplitude > 1.0: amplitude = 1.0
-    if amplitude < 0.0: amplitude = 0.0
-    for i in count(skip_frame):
-        sine = math.sin(a * 2.0 * math.pi * float(frequency) * (float(i) / float(framerate)))
-        yield float(amplitude) * sine
+    if type(amplitude) is not int:
+        for i in count(skip_frame):
+            sine = math.sin(a * 2.0 * math.pi * float(frequency) * (float(i) / float(framerate)))
+            amp_func = amplitude[0](amplitude[1] * 2.0 * math.pi * (float(i) / float(framerate)))
+            res = float(sine * (amp_func * amplitude[2] + float(amplitude[3])))
+            # print(res)
+            yield res
+    else:
+        if amplitude > 1.0: amplitude = 1.0
+        if amplitude < 0.0: amplitude = 0.0
+        for i in count(skip_frame):
+            sine = math.sin(a * 2.0 * math.pi * float(frequency) * (float(i) / float(framerate)))
+            # print(sine)
+            yield float(amplitude) * sine
 
 def square_wave(frequency=440.0, framerate=44100, amplitude=0.5):
     for s in sine_wave(frequency, framerate, amplitude):
