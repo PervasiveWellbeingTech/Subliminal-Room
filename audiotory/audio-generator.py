@@ -15,7 +15,7 @@ duration = 20
 
 freqs = [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140]
 
-oscs = [1, 1.5, 2, 2.5, 3, 3.5, 4]
+oscs = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
 for freq in freqs:
     for osc in oscs:
         amp = [math.sin, osc * 2 * math.pi, -math.pi/2, .5, .5]
