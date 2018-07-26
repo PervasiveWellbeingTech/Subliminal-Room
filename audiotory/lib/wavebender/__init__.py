@@ -65,8 +65,8 @@ def sine_wave(a = 1, frequency=440.0, framerate=44100, amplitude=0.5,
     if type(amplitude) is not int:
         for i in count(skip_frame):
             sine = math.sin(a * 2.0 * math.pi * float(frequency) * (float(i) / float(framerate)))
-            amp_func = amplitude[0](amplitude[1] * 2.0 * math.pi * (float(i) / float(framerate)))
-            res = float(sine * (amp_func * amplitude[2] + float(amplitude[3])))
+            amp_func = amplitude[3] * amplitude[0](amplitude[1] * (float(i) / float(framerate)) + amplitude[2])
+            res = float(sine * (amp_func + float(amplitude[4])))
             # print(res)
             yield res
     else:
