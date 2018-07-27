@@ -1,5 +1,5 @@
 import libs
-from wavebender import *
+from wavebender import sine_wave, compute_samples, write_wavefile
 import math
 
 amp1 = [math.sin, 2 * 2 * math.pi, -math.pi/2, .5, .5]
@@ -19,8 +19,8 @@ oscs = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
 for freq in freqs:
     for osc in oscs:
         amp = [math.sin, osc * 2 * math.pi, -math.pi/2, .5, .5]
-        channels = ((sine_wave(a = 1, frequency = freq, amplitude=amp),),
-                    (sine_wave(a = 1, frequency = freq, amplitude=amp),))
+        channels = ((sine_wave(frequency = freq, amplitude=amp),),
+                    (sine_wave(frequency = freq, amplitude=amp),))
         samples = compute_samples(channels, duration * 44100)
-        write_wavefile('/Users/kaandonbekci/dev/pervasivetech/Room/audiotory/audio/test/{}Hz_{}osc.wav'.format(freq, osc),samples)
+        write_wavefile('/Users/kaandonbekci/dev/pervasivetech/Room/audiotory/audio/test/abi{}Hz_{}osc.wav'.format(freq, osc),samples)
         print('finished {}Hz and {}osc.'.format(freq, osc))

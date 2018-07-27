@@ -39,7 +39,7 @@ for j in range(experiments):
     total_delay+=delay
     delay = 0
     pgtime.delay(experiment_delay)
-    print()
+    print
 print('Average delay after {} requests with transition time {} within {} milisecond intervals, repeated {} times with {} miliseconds in between: {}'.format(count, hue_delay, interval, experiments, experiment_delay, total_delay/(count * experiments)))
 print('Minimum delay: {}. Maxmimum delay: {}.'.format(minimum, maximum))
 
