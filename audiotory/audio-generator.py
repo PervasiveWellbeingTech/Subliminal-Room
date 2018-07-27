@@ -5,8 +5,8 @@ import math
 amp1 = [math.sin, 2 * 2 * math.pi, -math.pi/2, .5, .5]
 amp2 = [math.sin, 2 * 2 * math.pi, -math.pi/2, .5, .5]
 
-channels = ((sine_wave(a = 1, frequency = 150.0, amplitude=amp1),),
-            (sine_wave(a = 1, frequency = 150.0, amplitude=amp2),))
+channels = ((sine_wave(frequency = 150.0, amplitude=amp1),),
+            (sine_wave(frequency = 150.0, amplitude=amp2),))
 
 duration = 20
 # samples = compute_samples(channels, duration * 44100)
