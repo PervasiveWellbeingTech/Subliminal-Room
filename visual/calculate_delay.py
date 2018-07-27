@@ -52,3 +52,6 @@ print('Minimum delay: {}. Maxmimum delay: {}.'.format(minimum, maximum))
 #
 # Average delay after 5 requests with transition time 0 within 200 milisecond intervals, repeated 20 times with 3000 miliseconds in between: 95.48
 # Minimum delay: 66. Maxmimum delay: 197.
+
+# Average delay after 10 requests with transition time 0 within 500 milisecond intervals, repeated 100 times with 3000 miliseconds in between: 93
+# Minimum delay: 41. Maxmimum delay: 3007.
