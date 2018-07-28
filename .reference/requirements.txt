@@ -1,5 +1,6 @@
 python2.7
 
+
 pip packages and their dependencies:
 librosa pyserial pygame
 numpy scipy matplotlib pandas pyopengl pyglet pillow moviepy lxml openpyxl xlrd configobj pyyaml gevent greenlet msgpack-python psutil tables requests[security] pyosf cffi pysoundcard pysoundfile seaborn psychopy_ext python-bidi psychopy

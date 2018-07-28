@@ -1,10 +1,4 @@
 import os
-# 
-# OPTIONS = {
-#
-# }
-#
-# TARGET = .7
 
 def change(cur, amount):
 	os.system("brightness " + str(cur + amount))
