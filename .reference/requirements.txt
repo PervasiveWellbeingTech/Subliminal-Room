@@ -1,9 +1,13 @@
 python2.7
 
-
 pip packages and their dependencies:
-librosa pyserial pygame
+librosa pygame
 numpy scipy matplotlib pandas pyopengl pyglet pillow moviepy lxml openpyxl xlrd configobj pyyaml gevent greenlet msgpack-python psutil tables requests[security] pyosf cffi pysoundcard pysoundfile seaborn psychopy_ext python-bidi psychopy
 pyserial pyparallel egi iolabs
 pytest coverage sphinx
-cffi sounddevice pysoundfile
+cffi sounddevice
+
+pyo audio for psychopy:
+http://ajaxsoundstudio.com/software/pyo/
+
+Matlab API for python:
