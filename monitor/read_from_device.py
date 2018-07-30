@@ -19,7 +19,7 @@ def main():
     ser = serial.Serial(serial_port)
 
     simulation_workflow([callback], ser)
-
+    
 
 if __name__ == "__main__":
     main()

@@ -8,10 +8,10 @@ def callback(value_name, value):
 
 def main():
     zephyr.configure_root_logger()
-    
+
     ser = TimedVirtualSerial(test_data_dir + "/120-second-bt-stream.dat",
                              test_data_dir + "/120-second-bt-stream-timing.csv")
-    
+
     simulation_workflow([callback], ser)
 
 
