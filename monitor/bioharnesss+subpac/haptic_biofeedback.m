@@ -21,6 +21,7 @@ delete(instrfindall);
 
 %%%%%%%%%%%%%%%%%  Kaan's setup  %%%%%%%%%%%%%%%%%%%
 bh_port = 'COM5';
+%bh_port = '/dev/tty.BHBHT022509-iSerialPort1';
 bh_remote_name = 'BH BHT022509';
 qs_port = '/dev/tty.AffectivaQ-v2-D9B8-SPP';
 haptic_port = '/dev/tty.usbmodem1411';
