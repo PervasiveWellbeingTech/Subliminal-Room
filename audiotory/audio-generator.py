@@ -21,12 +21,12 @@ def custom(x):
 # args = [2, .5, .5]
 
 channels = ((super_sine_wave(frequency = 100.0, amplitude=custom),),
-            (super_sine_wave(frequency = 100.0, amplitude=custom),))
+            (super_sine_wave(frequency = 140.0, amplitude=custom),))
 
 duration = 25
 samples = compute_samples(channels, duration * 44100)
 
-write_wavefile('/Users/kaandonbekci/dev/pervasivetech/Room/audiotory/audio/super_test.wav',samples)
+write_wavefile('100-140 pulse original equation.wav',samples)
 
 # freqs = [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140]
 #
