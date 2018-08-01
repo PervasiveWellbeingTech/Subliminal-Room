@@ -8,7 +8,7 @@ win = visual.Window()
 # msg = visual.TextStim(win, text="Hola mundo!")
 
 
-psycopyClock = clock.Clock()
+clock = clock.Clock()
 monotonic = clock.MonotonicClock()
 # msg.draw()
 # win.flip()
