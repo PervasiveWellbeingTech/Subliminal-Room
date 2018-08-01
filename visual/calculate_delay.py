@@ -15,10 +15,10 @@ cmds = [cmd1, cmd2, cmd3]
 # test1_int = Intervention('TEST', 1, [print, pgtime.delay, print, pgtime.delay], [['C'], [3000], ['D'], [3000]])
 hue.set_group(cmd1)
 clock = pgtime.Clock()
-experiments = 100
+experiments = 10
 delay = 0
 total_delay = 0
-count = 10
+count = 20
 interval = 500
 experiment_delay = 3000
 minimum = 1000000
@@ -55,3 +55,10 @@ print('Minimum delay: {}. Maxmimum delay: {}.'.format(minimum, maximum))
 
 # Average delay after 10 requests with transition time 0 within 500 milisecond intervals, repeated 100 times with 3000 miliseconds in between: 93
 # Minimum delay: 41. Maxmimum delay: 3007.
+
+# WITH WIRED CONNECTION
+# Average delay after 10 requests with transition time 0 within 500 milisecond intervals, repeated 50 times with 3000 miliseconds in between: 34
+# Minimum delay: 25. Maxmimum delay: 71.
+# 
+# Average delay after 20 requests with transition time 0 within 500 milisecond intervals, repeated 10 times with 3000 miliseconds in between: 35
+# Minimum delay: 28. Maxmimum delay: 62.
