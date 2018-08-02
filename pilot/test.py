@@ -85,11 +85,12 @@ def init():
 
 def v1():
     # filters['red'].draw()
-    hue.make_command()
     colors = [[255, 0, 0], [0, 255, 0], [0, 0, 255]]
+    cmds = [hue.make_command(colors[0]), hue.make_command(colors[1]), hue.make_command(colors[2])]
     for j in range(len(colors)):
 
         win.color = colors[j]
+        hue.set_group(cmds[j])
         twiceFlip()
         for i in range(5):
             # win.flip(False)
@@ -113,6 +114,7 @@ event.waitKeys(keyList=params['continueKey'])
 v1()
 win.color = [255, 255, 255]
 twiceFlip()
+hue.set_group(hue.make_command([255,255,255]))
 msg['continue'].draw()
 win.flip()
 event.waitKeys(keyList=params['continueKey'])
