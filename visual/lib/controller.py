@@ -39,11 +39,11 @@ def set_group(command, hgroup = None):
     hgroup.brightness = command['BRIGHTNESS']
 
 
-def make_command(r, g, b, brightness = 255, transition = 0):
+def make_command(rgb, brightness = 255, transition = 0):
     command = {
-    'R': r,
-    'G': g,
-    'B': b,
+    'R': rgb[0],
+    'G': rgb[1],
+    'B': rgb[2],
     'BRIGHTNESS': brightness,
     'TRANSITION': transition #0 is default
     }

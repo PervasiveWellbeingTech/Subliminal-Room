@@ -5,6 +5,7 @@ warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 from psychopy import visual, core, sound, logging, event
 import controller as hue
+import random
 params = {
     # Declare stimulus and response parameters
     'nTrials': 3,            # number of trials in this session
@@ -23,17 +24,21 @@ params = {
     # declare display parameters
     'fullScreen': False,       # run in full screen mode?
     'screenToShow': 1,        # display on primary screen (0) or secondary (1)?
-    'initialScreenColor':(255,255,255), # in rgb255 space: (r,g,b) all between 0 and 255
-    'resolution': [800, 800],
+    'initialScreenColor':[255,255,255], # in rgb255 space: (r,g,b) all between 0 and 255
+    'resolution': [1440, 900],
     'colorSpace': 'rgb255',
     'units': 'norm'
 }
 
-win, msg, fixation, clock, stimuli = None, None, None, None, None
+win, filters, msg, fixation, clock, stimuli = None, None, None, None, None, None
+
+
+def twiceFlip():
+    win.flip()
+    win.flip()
 
 def setupStimuli(*args):
     global stimuli
-    global win
     stimuli = []
     for c in args:
         stim = visual.TextStim(win, color=[0, 0, 0], colorSpace=params['colorSpace'],
@@ -57,7 +62,6 @@ def setupMessages():
 
 def setupFixation():
     global fixation
-    global win
     fixation = visual.ShapeStim(win, lineWidth= 10, lineColor=[0, 0, 0],lineColorSpace='rgb255', vertices=((-.1, 0), (.1, 0), (0, 0), (0, .1), (0, -.1)), closeShape=False, name='fixCross');
     fixation.draw()
 
@@ -65,19 +69,54 @@ def setupWindow():
     global win
     win = visual.Window(params['resolution'], fullscr=params['fullScreen'], allowGUI=True, units=params['units'], color=params['initialScreenColor'], colorSpace=params['colorSpace'])
 
+def setupFilters():
+    global filters
+    filters = {
+        'red': visual.Rect(win, width=3, height=3, fillColor=[255, 0, 0], fillColorSpace=params['colorSpace'])
+    }
 def init():
     setupWindow()
+    setupFilters()
     setupFixation()
     setupMessages()
     setupClocks()
+    hue.init()
+
+
+def v1():
+    # filters['red'].draw()
+    hue.make_command()
+    colors = [[255, 0, 0], [0, 255, 0], [0, 0, 255]]
+    for j in range(len(colors)):
+
+        win.color = colors[j]
+        twiceFlip()
+        for i in range(5):
+            # win.flip(False)
+            clock['block'].add(2)
+            index = random.randint(0, len(stimuli)-1)
+            # filters['red'].draw()
+            stimuli[index].draw()
+            win.flip()
+            while clock['block'].getTime()<0:
+                pass
+            win.flip()
+            clock['block'].add(.500)
+            while clock['block'].getTime()<0:
+                pass
+
 init()
+setupStimuli('a', 'b', 'c', 'd', 'e')
 msg['continue'].draw()
 win.flip()
-setupStimuli('a', 'b', 'c', 'd', 'e')
-
 event.waitKeys(keyList=params['continueKey'])
+v1()
+win.color = [255, 255, 255]
+twiceFlip()
+msg['continue'].draw()
 win.flip()
 event.waitKeys(keyList=params['continueKey'])
+
 
 # # for frameN in range(100):#for exactly 100 frames
 #     win.flip()
