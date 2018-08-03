@@ -1,11 +1,15 @@
 import sys
 import signal
-sys.path.insert(0, '/Users/kaandonbekci/dev/pervasivetech/Room/visual/lib')
-sys.path.insert(0, '/Users/kaandonbekci/dev/pervasivetech/Room/audiotory/lib')
-sys.path.insert(0, '/Users/kaandonbekci/dev/pervasivetech/Room/tactile/lib')
-sys.path.insert(0, '/Users/kaandonbekci/dev/pervasivetech/Room/olfactory/lib')
-sys.path.insert(0, '/Users/kaandonbekci/dev/pervasivetech/Room/monitor/lib')
-sys.path.insert(0, '/Users/kaandonbekci/dev/pervasivetech/Room/.common-lib')
+import platform
+paths = {'Darwin': '/Users/kaandonbekci/dev/pervasivetech/Room/',
+        'Windows': ''}
+path = paths[platform.system()]
+sys.path.insert(0, path+'visual/lib')
+sys.path.insert(0, path+'audiotory/lib')
+sys.path.insert(0, path+'tactile/lib')
+sys.path.insert(0, path+'olfactory/lib')
+sys.path.insert(0, path+'monitor/lib')
+sys.path.insert(0, path+'.common-lib')
 def signal_handler(sig, frame):
     print
     print('Exiting')

@@ -8,17 +8,17 @@ from pygame import time as pgtime
 hue.init()
 hue.group.on = True
 hue_delay = 0
-cmd1 = hue.make_command(255, 200, 80, 255, hue_delay)
-cmd2 = hue.make_command(255, 210, 100, 255, hue_delay)
-cmd3 = hue.make_command(255, 230, 120, 255, hue_delay)
+cmd1 = hue.make_command([255, 200, 80], 255, hue_delay)
+cmd2 = hue.make_command([255, 210, 100], 255, hue_delay)
+cmd3 = hue.make_command([255, 230, 120], 255, hue_delay)
 cmds = [cmd1, cmd2, cmd3]
 # test1_int = Intervention('TEST', 1, [print, pgtime.delay, print, pgtime.delay], [['C'], [3000], ['D'], [3000]])
 hue.set_group(cmd1)
 clock = pgtime.Clock()
-experiments = 10
+experiments = 15
 delay = 0
 total_delay = 0
-count = 20
+count = 10
 interval = 500
 experiment_delay = 3000
 minimum = 1000000
@@ -59,6 +59,10 @@ print('Minimum delay: {}. Maxmimum delay: {}.'.format(minimum, maximum))
 # WITH WIRED CONNECTION
 # Average delay after 10 requests with transition time 0 within 500 milisecond intervals, repeated 50 times with 3000 miliseconds in between: 34
 # Minimum delay: 25. Maxmimum delay: 71.
-# 
+#
 # Average delay after 20 requests with transition time 0 within 500 milisecond intervals, repeated 10 times with 3000 miliseconds in between: 35
 # Minimum delay: 28. Maxmimum delay: 62.
+
+# NEW ROUTER + WIRED
+# Average delay after 10 requests with transition time 0 within 500 milisecond intervals, repeated 15 times with 3000 miliseconds in between: 35
+# Minimum delay: 25. Maxmimum delay: 60.

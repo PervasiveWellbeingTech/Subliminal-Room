@@ -6,6 +6,7 @@ warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 from psychopy import visual, core, sound, logging, event
 import controller as hue
 import random
+
 params = {
     # Declare stimulus and response parameters
     'nTrials': 3,            # number of trials in this session
@@ -13,22 +14,17 @@ params = {
     'ISI': 2,                 # time between when one stimulus disappears and the next appears (in seconds)
     'tStartup': 2,            # pause time before starting first stimulus
     'continueKey': 't',        # key from scanner that says scan is starting
-    'respKeys': 'space',           # keys to be used for responses (mapped to 1,2,3,4)
+    'respKey': 'space',           # keys to be used for responses (mapped to 1,2,3,4)
     'respAdvances': True,     # will a response end the stimulus?
-    'imageDir': 'Faces/',    # directory containing image stimluli
-    'imageSuffix': '.jpg',   # images will be selected randomly (without replacement) from all files in imageDir that end in imageSuffix.
-    # declare prompt and question files
     'skipPrompts': False,     # go right to the scanner-wait page
     'promptDir': 'Text/',  # directory containing prompts and questions files
     'promptFile': 'SamplePrompts.txt', # Name of text file containing prompts
-    # declare display parameters
     'fullScreen': False,       # run in full screen mode?
     'screenToShow': 1,        # display on primary screen (0) or secondary (1)?
     'initialScreenColor':[255,255,255], # in rgb255 space: (r,g,b) all between 0 and 255
     'resolution': [1440, 900],
     'colorSpace': 'rgb255',
-    'units': 'norm'
-}
+    'units': 'norm'}
 
 win, filters, msg, fixation, clock, stimuli = None, None, None, None, None, None
 
@@ -80,17 +76,16 @@ def init():
     setupFixation()
     setupMessages()
     setupClocks()
-    hue.init()
+    # hue.init()
 
 
 def v1():
-    # filters['red'].draw()
     colors = [[255, 0, 0], [0, 255, 0], [0, 0, 255]]
-    cmds = [hue.make_command(colors[0]), hue.make_command(colors[1]), hue.make_command(colors[2])]
+    # cmds = [hue.make_command(colors[0]), hue.make_command(colors[1]), hue.make_command(colors[2])]
     for j in range(len(colors)):
 
         win.color = colors[j]
-        hue.set_group(cmds[j])
+        # hue.set_group(cmds[j])
         twiceFlip()
         for i in range(5):
             # win.flip(False)
@@ -114,7 +109,7 @@ event.waitKeys(keyList=params['continueKey'])
 v1()
 win.color = [255, 255, 255]
 twiceFlip()
-hue.set_group(hue.make_command([255,255,255]))
+# hue.set_group(hue.make_command([255,255,255]))
 msg['continue'].draw()
 win.flip()
 event.waitKeys(keyList=params['continueKey'])

@@ -49,7 +49,7 @@ def make_command(rgb, brightness = 255, transition = 0):
     }
     return command
 
-def init(bridge_ip = '192.168.1.2', gamut = GamutC):
+def init(bridge_ip = '192.168.1.3', gamut = GamutC):
     # print(bridge_ip)
     global converter, b, group, go
     converter = Converter(gamut)
