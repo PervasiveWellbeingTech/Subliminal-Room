@@ -135,13 +135,13 @@ def simulation_workflow(callbacks, ser):
 
     message_parser = MessageFrameParser(payload_parser.handle_message)
 
-    delayed_stream_thread = DelayedRealTimeStream(collector, callbacks, 1.2)
-    # delayed_stream_thread = DelayedRealTimeStream(collector, callbacks, 1)
+    # delayed_stream_thread = DelayedRealTimeStream(collector, callbacks, 1.2)
+    delayed_stream_thread = DelayedRealTimeStream(collector, [], 1)
 
 
     protocol = BioHarnessProtocol(ser, [message_parser.parse_data])
     # protocol.enable_periodic_packets()
-    protocol.enable_breathing_waveform()
+    # protocol.enable_breathing_waveform()
 
 
     delayed_stream_thread.start()

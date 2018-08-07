@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import division
 import libs
 import warnings
@@ -6,25 +7,27 @@ warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 from psychopy import visual, core, sound, logging, event
 import controller as hue
 import random
+import os
 
 params = {
     # Declare stimulus and response parameters
     'nTrials': 3,            # number of trials in this session
-    'stimDur': 1,             # time when stimulus is presented (in seconds)
-    'ISI': 2,                 # time between when one stimulus disappears and the next appears (in seconds)
+    'stimDur': 2,             # time when stimulus is presented (in seconds)
+    'ISI': .5,                 # time between when one stimulus disappears and the next appears (in seconds)
     'tStartup': 2,            # pause time before starting first stimulus
-    'continueKey': 't',        # key from scanner that says scan is starting
+    'continueKey': 'T',        # key from scanner that says scan is starting
     'respKey': 'space',           # keys to be used for responses (mapped to 1,2,3,4)
     'respAdvances': True,     # will a response end the stimulus?
     'skipPrompts': False,     # go right to the scanner-wait page
-    'promptDir': 'Text/',  # directory containing prompts and questions files
-    'promptFile': 'SamplePrompts.txt', # Name of text file containing prompts
+    'promptDir': '/pilot/prompts/',  # directory containing prompts and questions files
     'fullScreen': False,       # run in full screen mode?
     'screenToShow': 1,        # display on primary screen (0) or secondary (1)?
     'initialScreenColor':[255,255,255], # in rgb255 space: (r,g,b) all between 0 and 255
     'resolution': [1440, 900],
     'colorSpace': 'rgb255',
-    'units': 'norm'}
+    'units': 'norm',
+    'path': os.getcwd()
+}
 
 win, filters, msg, fixation, clock, stimuli = None, None, None, None, None, None
 
@@ -47,23 +50,43 @@ def setupClocks():
     'global': core.Clock(),
     'block': core.Clock()
     }
+    print('Clocks initialized.')
+
+def readMessageFile(msg, args = []):
+    with open(params['path'] + params['promptDir'] + msg.name +'.txt') as f:
+        data = f.read().strip().format(*args)
+        print('Read {}.txt'.format(msg.name))
+    msg.setText(data)
+
 
 def setupMessages():
     global msg
     msg = {
         'continue': visual.TextStim(win, pos=[0,-.5], wrapWidth=1.5, color='#000000',
-        alignHoriz='center', name='continue-message', text='Press "{}" to continue'
-        .format(params['continueKey'].upper()))
+        alignHoriz='center', name='continue-message'),
+        'welcome': visual.TextStim(win, pos=[0,-.5], wrapWidth=1.5, color='#000000',
+        alignHoriz='center', name='welcome-message'),
+        'nback-instructions': visual.TextStim(win, pos=[0, -.5], wrapWidth=1.5, color='#000000',
+        alignHoriz='center', name='nback-instructions-message'),
+        'arithmetic-instructions': visual.TextStim(win, pos=[0, -.5], wrapWidth=1.5, color='#000000',
+        alignHoriz='center', name='arithmetic-instructions-message'),
     }
+    readMessageFile(msg['continue'], [params['continueKey']])
+    readMessageFile(msg['welcome'])
+    readMessageFile(msg['nback-instructions'])
+    readMessageFile(msg['arithmetic-instructions'])
+    print('Setted up messages.')
 
 def setupFixation():
     global fixation
     fixation = visual.ShapeStim(win, lineWidth= 10, lineColor=[0, 0, 0],lineColorSpace='rgb255', vertices=((-.1, 0), (.1, 0), (0, 0), (0, .1), (0, -.1)), closeShape=False, name='fixCross');
     fixation.draw()
+    print('Fixation.')
 
 def setupWindow():
     global win
     win = visual.Window(params['resolution'], fullscr=params['fullScreen'], allowGUI=True, units=params['units'], color=params['initialScreenColor'], colorSpace=params['colorSpace'])
+    print('Window ✓')
 
 def setupFilters():
     global filters
@@ -102,7 +125,7 @@ def v1():
                 pass
 
 init()
-setupStimuli('a', 'b', 'c', 'd', 'e')
+setupStimuli('A', 'B', 'C', 'D', 'E', 'H', 'I', 'K', 'L', 'M', 'O', 'P', 'R', 'S', 'T')
 msg['continue'].draw()
 win.flip()
 event.waitKeys(keyList=params['continueKey'])

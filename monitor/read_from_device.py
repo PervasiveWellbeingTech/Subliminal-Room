@@ -7,8 +7,9 @@ from zephyr.testing import simulation_workflow
 
 
 def callback(value_name, value):
+    pass
     # if value_name =
-    print('({}: {})'.format(value_name, value))
+    # print('({}: {})'.format(value_name, value))
 
 def main():
     serial_port_dict = {"Darwin": "/dev/tty.BHBHT022509-iSerialPort1",
