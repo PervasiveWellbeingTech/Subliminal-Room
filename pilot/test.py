@@ -15,7 +15,7 @@ params = {
     'stimDur': 2,             # time when stimulus is presented (in seconds)
     'ISI': .5,                 # time between when one stimulus disappears and the next appears (in seconds)
     'tStartup': 2,            # pause time before starting first stimulus
-    'continueKey': 'T',        # key from scanner that says scan is starting
+    'continueKey': 't',        # key from scanner that says scan is starting
     'respKey': 'space',           # keys to be used for responses (mapped to 1,2,3,4)
     'respAdvances': True,     # will a response end the stimulus?
     'skipPrompts': False,     # go right to the scanner-wait page
@@ -26,7 +26,7 @@ params = {
     'resolution': [1440, 900],
     'colorSpace': 'rgb255',
     'units': 'norm',
-    'path': os.getcwd()
+    'path': libs.path
 }
 
 win, filters, msg, fixation, clock, stimuli = None, None, None, None, None, None
@@ -43,6 +43,7 @@ def setupStimuli(*args):
         stim = visual.TextStim(win, color=[0, 0, 0], colorSpace=params['colorSpace'],
         text=c.upper(), name=c+'-stimulus')
         stimuli.append(stim)
+    print('Stimuli ✓')
 
 def setupClocks():
     global clock
@@ -50,11 +51,13 @@ def setupClocks():
     'global': core.Clock(),
     'block': core.Clock()
     }
-    print('Clocks initialized.')
+    print('Clocks ✓')
 
 def readMessageFile(msg, args = []):
     with open(params['path'] + params['promptDir'] + msg.name +'.txt') as f:
-        data = f.read().strip().format(*args)
+        data = f.read().strip()
+        if len(args) is not 0:
+            data=data.format(*args)
         print('Read {}.txt'.format(msg.name))
     msg.setText(data)
 
@@ -71,17 +74,17 @@ def setupMessages():
         'arithmetic-instructions': visual.TextStim(win, pos=[0, -.5], wrapWidth=1.5, color='#000000',
         alignHoriz='center', name='arithmetic-instructions-message'),
     }
-    readMessageFile(msg['continue'], [params['continueKey']])
-    readMessageFile(msg['welcome'])
+    readMessageFile(msg['continue'], [params['continueKey'].upper()])
+    readMessageFile(msg['welcome'], [5, params['continueKey'].upper()])
     readMessageFile(msg['nback-instructions'])
     readMessageFile(msg['arithmetic-instructions'])
-    print('Setted up messages.')
+    print('Messages ✓')
 
 def setupFixation():
     global fixation
     fixation = visual.ShapeStim(win, lineWidth= 10, lineColor=[0, 0, 0],lineColorSpace='rgb255', vertices=((-.1, 0), (.1, 0), (0, 0), (0, .1), (0, -.1)), closeShape=False, name='fixCross');
     fixation.draw()
-    print('Fixation.')
+    print('Fixation ✓')
 
 def setupWindow():
     global win
@@ -99,6 +102,7 @@ def init():
     setupFixation()
     setupMessages()
     setupClocks()
+    print('init complete ✓')
     # hue.init()
 
 
@@ -126,9 +130,13 @@ def v1():
 
 init()
 setupStimuli('A', 'B', 'C', 'D', 'E', 'H', 'I', 'K', 'L', 'M', 'O', 'P', 'R', 'S', 'T')
+msg['welcome'].draw()
+win.flip()
+event.waitKeys(keyList=params['continueKey'])
 msg['continue'].draw()
 win.flip()
 event.waitKeys(keyList=params['continueKey'])
+
 v1()
 win.color = [255, 255, 255]
 twiceFlip()
