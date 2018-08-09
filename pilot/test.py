@@ -4,10 +4,12 @@ import libs
 import warnings
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
-from psychopy import visual, core, sound, logging, event
+from psychopy import visual, core, sound, logging, event, clock
 import controller as hue
 import random
 import os
+import json
+import pprint
 
 params = {
     # Declare stimulus and response parameters
@@ -22,14 +24,22 @@ params = {
     'promptDir': '/pilot/prompts/',  # directory containing prompts and questions files
     'fullScreen': False,       # run in full screen mode?
     'screenToShow': 1,        # display on primary screen (0) or secondary (1)?
-    'initialScreenColor':[255,255,255], # in rgb255 space: (r,g,b) all between 0 and 255
+    'initialScreenColor':[0.0, 0.0, 1.0],
+    'hues': [0.0, 120.0, 240.0],
+    'saturations': [.5, 1.0],
+    'values': [0],
+    'white': [0.0, 0.0, 1.0],
+    'nbackBlockTime': 10,
+    'arithmeticBlockTime': 10,
     'resolution': [1440, 900],
-    'colorSpace': 'rgb255',
+    'colorSpace': 'hsv',
     'units': 'norm',
     'path': libs.path
 }
 
-win, filters, msg, fixation, clock, stimuli = None, None, None, None, None, None
+
+
+win, filters, msg, fixation, clocks, stimuli, miniBlockOrder, experiment = None, None, None, None, None, None, None, None
 
 
 def twiceFlip():
@@ -46,10 +56,11 @@ def setupStimuli(*args):
     print('Stimuli ✓')
 
 def setupClocks():
-    global clock
-    clock = {
-    'global': core.Clock(),
-    'block': core.Clock()
+    global clocks
+    clocks = {
+    'experiment': clock.Clock(),
+    'block': clock.Clock(),
+    'trial': clock.Clock()
     }
     print('Clocks ✓')
 
@@ -60,7 +71,6 @@ def readMessageFile(msg, args = []):
             data=data.format(*args)
         print('Read {}.txt'.format(msg.name))
     msg.setText(data)
-
 
 def setupMessages():
     global msg
@@ -96,50 +106,82 @@ def setupFilters():
     filters = {
         'red': visual.Rect(win, width=3, height=3, fillColor=[255, 0, 0], fillColorSpace=params['colorSpace'])
     }
+
+def setupExperiment():
+    global experiment
+    colors = []
+    for h in params['hues']:
+        for s in params['saturations']:
+            for v in params['values']:
+                c = [h, s, v]
+                colors.append(c)
+    experiment = {
+    'nbackCount': 0,
+    'arithmeticCount': 0,
+    'colors': colors
+    }
+
+def randomize():
+    global miniBlockOrder
+    global experiment
+    firstArithmetic = random.random() < .5
+    experiment['firstArithmetic'] = firstArithmetic
+    random.shuffle(experiment['colors'])
+
 def init():
     setupWindow()
     setupFilters()
     setupFixation()
     setupMessages()
     setupClocks()
+    setupExperiment()
+    randomize()
     print('init complete ✓')
+    print experiment
+
     # hue.init()
 
+def showBeginningMessages():
+    msg['welcome'].draw()
+    win.flip()
+    event.waitKeys(keyList=params['continueKey'])
+    print  'a'
+    msg['continue'].draw()
+    win.flip()
+    event.waitKeys(keyList=params['continueKey'])
+    print 'b'
 
-def v1():
-    colors = [[255, 0, 0], [0, 255, 0], [0, 0, 255]]
+
+def nback():
+    colors = experiment['colors']
     # cmds = [hue.make_command(colors[0]), hue.make_command(colors[1]), hue.make_command(colors[2])]
+    print('Beginning n-back')
+    clocks['block'].reset()
     for j in range(len(colors)):
-
         win.color = colors[j]
         # hue.set_group(cmds[j])
         twiceFlip()
         for i in range(5):
+            print i
             # win.flip(False)
-            clock['block'].add(2)
+            clocks['block'].add(2)
             index = random.randint(0, len(stimuli)-1)
+            print index
             # filters['red'].draw()
             stimuli[index].draw()
             win.flip()
-            while clock['block'].getTime()<0:
+            while clocks['block'].getTime()<0:
                 pass
             win.flip()
-            clock['block'].add(.500)
-            while clock['block'].getTime()<0:
+            clocks['block'].add(.500)
+            while clocks['block'].getTime()<0:
                 pass
 
 init()
 setupStimuli('A', 'B', 'C', 'D', 'E', 'H', 'I', 'K', 'L', 'M', 'O', 'P', 'R', 'S', 'T')
-msg['welcome'].draw()
-win.flip()
-event.waitKeys(keyList=params['continueKey'])
-msg['continue'].draw()
-win.flip()
-event.waitKeys(keyList=params['continueKey'])
-
-v1()
-win.color = [255, 255, 255]
-twiceFlip()
+showBeginningMessages()
+clocks['experiment'].reset()
+nback()
 # hue.set_group(hue.make_command([255,255,255]))
 msg['continue'].draw()
 win.flip()
