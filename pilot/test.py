@@ -9,16 +9,22 @@ import controller as hue
 import random
 import os
 import json
-import pprint
+import pprint as pp
+pprint = pp.PrettyPrinter(indent=4).pprint
 
 params = {
     # Declare stimulus and response parameters
-    'nTrials': 3,            # number of trials in this session
-    'stimDur': 2,             # time when stimulus is presented (in seconds)
-    'ISI': .5,                 # time between when one stimulus disappears and the next appears (in seconds)
+    # 'stimDur': {
+    #     'nback': 2,
+    #     'arithmetic': 5
+    # },             # time when stimulus is presented (in seconds)
+    # 'ISI':{
+    #     'nback': .5,
+    #     'arithmetic': 1
+    # },                 # time between when one stimulus disappears and the next appears (in seconds)
     'tStartup': 2,            # pause time before starting first stimulus
     'continueKey': 't',        # key from scanner that says scan is starting
-    'respKey': 'space',           # keys to be used for responses (mapped to 1,2,3,4)
+    'responseKeys': ['space', 'backspace'],           # keys to be used for responses (mapped to 1,2,3,4)
     'respAdvances': True,     # will a response end the stimulus?
     'skipPrompts': False,     # go right to the scanner-wait page
     'promptDir': '/pilot/prompts/',  # directory containing prompts and questions files
@@ -27,30 +33,37 @@ params = {
     'initialScreenColor':[0.0, 0.0, 1.0],
     'hues': [0.0, 120.0, 240.0],
     'saturations': [.5, 1.0],
-    'values': [0],
+    'values': [1.0],
     'white': [0.0, 0.0, 1.0],
+    'textColor': [0.0, 0.0, 0.0],
     'nbackBlockTime': 10,
     'arithmeticBlockTime': 10,
     'resolution': [1440, 900],
     'colorSpace': 'hsv',
     'units': 'norm',
-    'path': libs.path
+    'path': libs.path, # FIXME: get path of file not cwd
+    'blockTimes': {
+        # 'nback': 5.0 * 60, #in seconds, 5 min
+        'nback': 10, #for testing
+        # 'arithmetic': 5.0 * 60,
+        'arithmetic': 20
+    }
 }
 
 
 
-win, filters, msg, fixation, clocks, stimuli, miniBlockOrder, experiment = None, None, None, None, None, None, None, None
 
+win, filters, msg, check, cross, fixation, clocks, stimuli, miniBlockOrder, experiment, participantNo = None, None, None, None, None, None, None, None, None, None, None
 
 def twiceFlip():
     win.flip()
     win.flip()
 
-def setupStimuli(*args):
+def setupStimuli(stims = []):
     global stimuli
     stimuli = []
-    for c in args:
-        stim = visual.TextStim(win, color=[0, 0, 0], colorSpace=params['colorSpace'],
+    for c in stims:
+        stim = visual.TextStim(win, color=params['textColor'], colorSpace=params['colorSpace'],
         text=c.upper(), name=c+'-stimulus')
         stimuli.append(stim)
     print('Stimuli ✓')
@@ -72,17 +85,18 @@ def readMessageFile(msg, args = []):
         print('Read {}.txt'.format(msg.name))
     msg.setText(data)
 
+def createMessage(str):
+    return visual.TextStim(win, pos=[0,-.5], wrapWidth=1.5, color=params['textColor'], colorSpace=params['colorSpace'],
+    alignHoriz='center', name=str)
+
 def setupMessages():
     global msg
     msg = {
-        'continue': visual.TextStim(win, pos=[0,-.5], wrapWidth=1.5, color='#000000',
-        alignHoriz='center', name='continue-message'),
-        'welcome': visual.TextStim(win, pos=[0,-.5], wrapWidth=1.5, color='#000000',
-        alignHoriz='center', name='welcome-message'),
-        'nback-instructions': visual.TextStim(win, pos=[0, -.5], wrapWidth=1.5, color='#000000',
-        alignHoriz='center', name='nback-instructions-message'),
-        'arithmetic-instructions': visual.TextStim(win, pos=[0, -.5], wrapWidth=1.5, color='#000000',
-        alignHoriz='center', name='arithmetic-instructions-message'),
+        'continue': createMessage('continue-message'),
+        'welcome': createMessage('welcome-message'),
+        'nback-instructions': createMessage('nback-instructions-message'),
+        'arithmetic-instructions': createMessage('arithmetic-instructions-message'),
+        'completion': createMessage('completion-message'),
     }
     readMessageFile(msg['continue'], [params['continueKey'].upper()])
     readMessageFile(msg['welcome'], [5, params['continueKey'].upper()])
@@ -92,9 +106,15 @@ def setupMessages():
 
 def setupFixation():
     global fixation
-    fixation = visual.ShapeStim(win, lineWidth= 10, lineColor=[0, 0, 0],lineColorSpace='rgb255', vertices=((-.1, 0), (.1, 0), (0, 0), (0, .1), (0, -.1)), closeShape=False, name='fixCross');
-    fixation.draw()
+    fixation = visual.ShapeStim(win, lineWidth= 10, lineColor=[0, 0, 0],lineColorSpace='rgb255', vertices=((-.1, 0), (.1, 0), (0, 0), (0, .1), (0, -.1)), closeShape=False, name='fixation');
     print('Fixation ✓')
+
+def setupCheckCross():
+    global check
+    global cross
+    check = visual.ShapeStim(win, lineWidth= 10, lineColor=[0, 0, 0],lineColorSpace='rgb255', vertices=((-.1, 0), (.1, 0), (0, 0), (0, .1), (0, -.1)), closeShape=False, name='check');
+    check = visual.ShapeStim(win, lineWidth= 10, lineColor=[0, 0, 0],lineColorSpace='rgb255', vertices=((-.1, 0), (.1, 0), (0, 0), (0, .1), (0, -.1)), closeShape=False, name='check');
+    print('Check and cross ✓')
 
 def setupWindow():
     global win
@@ -107,6 +127,38 @@ def setupFilters():
         'red': visual.Rect(win, width=3, height=3, fillColor=[255, 0, 0], fillColorSpace=params['colorSpace'])
     }
 
+def loadNbackSetup():
+    global params
+    data = None
+    with open(params['inputDir'] + params['nback']['inputDir'] + params['nback']['inputNo'] + '.json', mode = 'r') as f:
+         data = json.load(f)
+    params['nback']['sequence'] = data['sequence']
+    params['nback']['correctResponses'] = data['responses']
+
+def setupParameters():
+    global params
+    params['inputDir'] = params['path'] + 'pilot/input/'
+    params['outputDir'] = params['path'] + 'pilot/output/'
+    params['nBlocks'] = len(params['hues']) * len(params['saturations']) * len(params['values']) + 1
+    params['nback'] = {}
+    params['arithmetic'] = {}
+    params['nback']['n'] = [None] * params['nBlocks']
+    params['nback']['inputNo'] = '1'
+    params['nback']['inputDir'] = 'nback/'
+    params['nback']['ISI'] = [None] * params['nBlocks']
+    params['nback']['stimDur'] = [None] * params['nBlocks']
+    params['arithmetic']['ISI'] = [None] * params['nBlocks']
+    params['arithmetic']['stimDur'] = [None] * params['nBlocks']
+    params['arithmetic']['inputNo'] = '1'
+    params['arithmetic']['inputDir'] = 'arithmetic/'
+
+    for i in range(params['nBlocks']):
+        params['nback']['n'][i] = 2
+        params['nback']['ISI'][i] = .5
+        params['nback']['stimDur'][i] = 2
+        params['arithmetic']['ISI'][i] = 1.5
+        params['arithmetic']['stimDur'][i] = 6
+
 def setupExperiment():
     global experiment
     colors = []
@@ -115,74 +167,139 @@ def setupExperiment():
             for v in params['values']:
                 c = [h, s, v]
                 colors.append(c)
+
+    colors.append(params['white'])
+    nbackResponseTimes = [None] * params['nBlocks']
+    nbackResponses = [None] * params['nBlocks']
+    nbackStimShown = [0] * params['nBlocks']
+    arithmeticResponseTimes = [None] * params['nBlocks']
+    arithmeticResponses = [None] * params['nBlocks']
+    arithmeticStimShown = [0] * params['nBlocks']
+
+
+    for i in range(params['nBlocks']):
+        nbackResponseTimes[i] = []
+        arithmeticResponseTimes[i] = []
+        nbackResponses[i] = []
+        arithmeticResponses[i] = []
+
     experiment = {
-    'nbackCount': 0,
-    'arithmeticCount': 0,
-    'colors': colors
+        'nback': {
+            'count': 0,
+            'responseTimes': nbackResponseTimes,
+            'responses': nbackResponses,
+            'lastShown': 0,
+            'stimShown': nbackStimShown
+        },
+        'arithmetic': {
+            'count': 0,
+            'responseTimes': arithmeticResponseTimes,
+            'responses': arithmeticResponses,
+            'lastShown': 0,
+            'stimShown': arithmeticStimShown
+        },
+        'colors': colors,
     }
 
 def randomize():
-    global miniBlockOrder
     global experiment
-    firstArithmetic = random.random() < .5
-    experiment['firstArithmetic'] = firstArithmetic
+    experiment['firstArithmetic'] = random.random() < .5
     random.shuffle(experiment['colors'])
 
 def init():
     setupWindow()
     setupFilters()
     setupFixation()
+    setupCheckCross()
     setupMessages()
     setupClocks()
+    setupParameters()
     setupExperiment()
     randomize()
     print('init complete ✓')
-    print experiment
+    # print experiment
 
+def saveAfterBlock():
+    pass
     # hue.init()
 
 def showBeginningMessages():
     msg['welcome'].draw()
     win.flip()
     event.waitKeys(keyList=params['continueKey'])
-    print  'a'
     msg['continue'].draw()
     win.flip()
     event.waitKeys(keyList=params['continueKey'])
-    print 'b'
 
-
-def nback():
-    colors = experiment['colors']
-    # cmds = [hue.make_command(colors[0]), hue.make_command(colors[1]), hue.make_command(colors[2])]
-    print('Beginning n-back')
+def nback(white = False):
+    global experiment
+    nbackCount = experiment['nback']['count']
+    color = experiment['colors'][nbackCount]
+    n = params['nback']['n'][nbackCount]
+    ISI = params['nback']['ISI'][nbackCount]
+    stimDur = params['nback']['stimDur'][nbackCount]
+    blockDur = params['blockTimes']['nback']
+    curStim = experiment['nback']['lastShown']
+    stimShown = 0
+    responses = []
+    responseTimes = []
+    win.color = color
+    twiceFlip()
+    print('Beginning miniblock nback {} with n: {}, stimDur: {}, ISI: {}, color: {}.'.format(nbackCount, n, stimDur, ISI, color))
     clocks['block'].reset()
-    for j in range(len(colors)):
-        win.color = colors[j]
-        # hue.set_group(cmds[j])
-        twiceFlip()
-        for i in range(5):
-            print i
-            # win.flip(False)
-            clocks['block'].add(2)
-            index = random.randint(0, len(stimuli)-1)
-            print index
-            # filters['red'].draw()
-            stimuli[index].draw()
-            win.flip()
-            while clocks['block'].getTime()<0:
-                pass
-            win.flip()
-            clocks['block'].add(.500)
-            while clocks['block'].getTime()<0:
-                pass
+    clocks['block'].add(blockDur)
+    nbackStorage = []
+    while(clocks['block'].getTime() < 0):
+        # index = random.randint(0, len(stimuli) - 1)
+        index = params['nback']['sequence'][curStim]
+        stimuli[index].draw()
+        keys = []
+        while clocks['trial'].getTime()<0:
+            pass
+        clocks['trial'].reset()
+        clocks['trial'].add(stimDur)
+        win.flip()
+        print(clocks['trial'].getTime())
+        while clocks['trial'].getTime()<0 and len(keys) is 0:
+            keys = event.getKeys(keyList=params['responseKeys'])
+        responseTime = stimDur + clocks['trial'].getTime()
+        clocks['trial'].reset()
+        clocks['trial'].add(ISI)
+        if len(keys) is 0: #did not respond
+            responseTime = -1
+            print('no response')
+        else:
+            resp = 0
+            if str(keys[0][0]) is 's':
+                resp = 1
+            if resp is params['nback']['correctResponses'][str(n)][curStim]: #correct
+                print('correct')
+                # check.draw()
+            else: #wrong
+                print('wrong')
+                # cross.draw()
+        win.flip()
+        responses.append(keys)
+        responseTimes.append(responseTime)
+        curStim += 1
+        stimShown += 1
+    experiment['nback']['lastShown'] = curStim #might be unneccesary as list is mallible
+    experiment['nback']['stimShown'][nbackCount] = stimShown
+    experiment['nback']['responseTimes'][nbackCount] = responseTimes
+    experiment['nback']['responses'][nbackCount] = responses
+    experiment['nback']['count'] += 1
+    saveAfterBlock()
+
 
 init()
-setupStimuli('A', 'B', 'C', 'D', 'E', 'H', 'I', 'K', 'L', 'M', 'O', 'P', 'R', 'S', 'T')
+loadNbackSetup()
+#              0    1    2    3    4    5    6    7    8    9    10   11   12   13   14
+setupStimuli(['A', 'B', 'C', 'D', 'E', 'H', 'I', 'K', 'L', 'M', 'O', 'P', 'R', 'S', 'T'])
 showBeginningMessages()
 clocks['experiment'].reset()
 nback()
 # hue.set_group(hue.make_command([255,255,255]))
+pprint(experiment)
 msg['continue'].draw()
 win.flip()
 event.waitKeys(keyList=params['continueKey'])
