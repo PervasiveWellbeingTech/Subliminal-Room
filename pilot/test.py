@@ -51,7 +51,7 @@ def createMessage(str):
     return visual.TextStim(win, pos=[0,-.5], wrapWidth=1.5, color=params['textColor'], colorSpace=params['colorSpace'],
     alignHoriz='center', name=str)
 
-def setupMessages():
+def setupMessages(): #better way to do this.
     global msg
     msg = {
         'continue': createMessage('continue-message'),
@@ -60,6 +60,8 @@ def setupMessages():
         'pause': createMessage('pause-message'),
         'arithmetic-instructions': createMessage('arithmetic-instructions-message'),
         'completion': createMessage('completion-message'),
+        'nback-alert': createMessage('nback-alert'),
+        'arithmetic-alert': createMessage('arithmetic-alert')
     }
     readMessageFile(msg['continue'], [params['continueKey'].upper()])
     readMessageFile(msg['welcome'], [params['nback']['blockTime'], params['arithmetic']['blockTime'], params['pauseDur'], params['continueKey'].upper()])
@@ -125,6 +127,8 @@ def setupParameters():
             'units': 'norm',
             'values': [1.0],
             'white': [0.0, 0.0, 1.0],
+            'taskMessageTime': 2,
+            'practiceDur': 1 * 60
             # 'pauseDur': 30,
         }
         params['nBlocks'] = len(params['hues']) * len(params['saturations']) * len(params['values']) + 1
@@ -218,7 +222,6 @@ def randomize():
     random.shuffle(experiment['colors'])
     (firstTask, secondTask) = (arithmetic, nback) if experiment['firstArithmetic'] else (nback, arithmetic)
 
-
 def createOutputDir():
     dir = params['outputDir']+str(experiment['participantNo'])
     os.mkdir(dir)
@@ -266,14 +269,6 @@ def saveExperiment(note = None):
         json.dump(saveFile, f, indent=3)
     experiment['saveCount'] += 1
 
-def showBeginningMessages():
-    msg['welcome'].draw()
-    win.flip()
-    event.waitKeys(keyList=params['continueKey'])
-    msg['continue'].draw()
-    win.flip()
-    event.waitKeys(keyList=params['continueKey'])
-
 def wait(clock):
     while clock.getTime() < 0:
         pass
@@ -285,7 +280,7 @@ def nbackPractice():
     stimShown = 0
     win.color = params['white']
     twiceFlip()
-    msg['nback'].draw()
+    # msg['nback'].draw()
     clocks['trial'].reset()
     clocks['trial'].add(params['taskMessageTime'])
     win.flip()
@@ -296,7 +291,7 @@ def nbackPractice():
     clocks['block'].reset()
     clocks['block'].add(params['practiceDur'])
     clocks['trial'].reset()
-    clocks['trial'].addTime(params['nback']['ISI'][0])
+    clocks['trial'].add(params['nback']['ISI'][0])
     while clocks['block'].getTime() < 0:
         index = params['nback']['sequence'][curStim]
         stimuli[index].draw()
@@ -347,7 +342,7 @@ def nback(practice = False): # FIXME: first n stim should not have correct respo
     responseTimes = []
     win.color = experiment['colors'][nbackCount]
     twiceFlip()
-    msg['nback'].draw()
+    # msg['nback'].draw()
     clocks['trial'].reset()
     clocks['trial'].add(params['taskMessageTime'])
     win.flip()
@@ -414,8 +409,18 @@ def arithmeticPractice():
     pass
 
 def practice():
+    firstTask(practice = True)
+    secondTask(practice = True)
 
-def pause(sec):
+def showBeginningMessages():
+    msg['welcome'].draw()
+    win.flip()
+    event.waitKeys(keyList=params['continueKey'])
+    msg['continue'].draw()
+    win.flip()
+    event.waitKeys(keyList=params['continueKey'])
+
+def pause(sec): #sliders for feedback
     win.color = params['white']
     twiceFlip()
     msg['pause'].draw()
@@ -441,6 +446,7 @@ while ongoing:
     pause(params['pauseDur'])
     if experiment['blockCount'] is params['nBlocks']:
         ongoing = False
+experiment['experimentDuration'] = clocks['experiment'].getTime()
 # pprint(experiment)
 saveExperiment('end of experiment')
 msg['continue'].draw()
