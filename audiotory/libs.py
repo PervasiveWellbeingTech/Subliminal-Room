@@ -2,7 +2,8 @@ import sys
 import signal
 import platform
 paths = {'Darwin': '/Users/kaandonbekci/dev/pervasivetech/Room/',
-        'Windows': ''}
+        'Windows': '',
+        'Linux': '/home/kaan/dev/pervasivetech/Room/'}
 path = paths[platform.system()]
 sys.path.insert(0, path+'visual/lib')
 sys.path.insert(0, path+'audiotory/lib')
@@ -14,4 +15,5 @@ def signal_handler(sig, frame):
     print
     print('Exiting')
     sys.exit(0)
+    exit()
 signal.signal(signal.SIGINT, signal_handler)

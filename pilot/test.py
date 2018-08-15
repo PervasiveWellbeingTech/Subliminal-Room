@@ -89,7 +89,7 @@ def setupCheckCross():
 
 def setupWindow():
     global win
-    win = visual.Window(params['resolution'], fullscr=params['fullScreen'], allowGUI=True, units=params['units'], color=params['initialScreenColor'], colorSpace=params['colorSpace'])
+    win = visual.Window(params['resolution'], fullscr=params['fullScreen'], allowGUI=False, units=params['units'], color=params['initialScreenColor'], colorSpace=params['colorSpace'])
     print('Window ✓')
 
 def setupFilters():
