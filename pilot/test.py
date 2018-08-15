@@ -23,9 +23,14 @@ def twiceFlip():
 def setupStimuli():
     global stimuli
     stimuli = []
-    for c in params['nback']['letters']:
-        stim = visual.TextStim(win, color=params['textColor'], colorSpace=params['colorSpace'],
-        text=c.upper(), name=c+'-stimulus')
+    # for c in params['nback']['letters']:
+    #     stim = visual.TextStim(win, color=params['textColor'], colorSpace=params['colorSpace'],
+    #     text=c.upper(), name=c+'-stimulus')
+    #     stimuli.append(stim)
+    for c in range(len(params['nback']['letters'])):
+        f = params['inputDir'] + params['nback']['inputDir'] + params['nback']['stimDir'] + str(c) + '.png'
+        # f = params['inputDir'] + params['nback']['inputDir'] + params['nback']['stimDir'] +  'a.svg'
+        stim = visual.ImageStim(win, f, name=params['nback']['letters'][c])
         stimuli.append(stim)
     print('Stimuli ✓')
 
@@ -96,7 +101,7 @@ def setupFilters():
 def loadNbackSetup():
     global params
     data = None
-    with open(params['inputDir'] + params['nback']['inputDir'] + params['nback']['inputNo'] + '.json', mode = 'r') as f:
+    with open(params['inputDir'] + params['nback']['inputDir'] + params['nback']['setupDir'] + params['nback']['inputNo'] + '.json', mode = 'r') as f:
          data = json.load(f)
     params['nback']['sequence'] = data['sequence']
     params['nback']['correctResponses'] = data['responses']
@@ -116,6 +121,7 @@ def setupParameters():
             'initialScreenColor':[0.0, 0.0, 1.0],
             'path': libs.path, # FIXME: get path of file not cwd
             'pauseDur': 5,
+            # 'pauseDur': 30,
             'promptDir': '/pilot/prompts/',  # directory containing prompts and questions files
             'resolution': [1440, 900],
             'respAdvances': True,     # will a response end the stimulus?
@@ -129,7 +135,6 @@ def setupParameters():
             'white': [0.0, 0.0, 1.0],
             'taskMessageTime': 2,
             'practiceDur': 1 * 60
-            # 'pauseDur': 30,
         }
         params['nBlocks'] = len(params['hues']) * len(params['saturations']) * len(params['values']) + 1
         params['outputDir'] = params['path'] + 'pilot/output/'
@@ -147,6 +152,8 @@ def setupParameters():
         params['nback']['blockTime'] = 10
         params['nback']['firstStimDelay'] = 2
         params['nback']['inputDir'] = 'nback/'
+        params['nback']['setupDir'] = 'JSON/'
+        params['nback']['stimDir'] = 'letters/'
         params['nback']['inputNo'] = '1'
         params['nback']['ISI'] = [None] * params['nBlocks']
                 #              0    1    2    3    4    5    6    7    8    9    10   11   12   13   14
@@ -435,7 +442,7 @@ def pause(sec): #sliders for feedback
 
 init()
 showBeginningMessages()
-practice()
+# practice()
 clocks['experiment'].reset()
 while ongoing:
     firstTask()

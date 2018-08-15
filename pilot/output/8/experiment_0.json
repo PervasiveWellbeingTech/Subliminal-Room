@@ -1,0 +1,110 @@
+{
+   "note": "init complete", 
+   "experiment": {
+      "firstArithmetic": false, 
+      "blockCount": 0, 
+      "participantNo": 8, 
+      "saveCount": 0, 
+      "colors": [
+         [
+            120.0, 
+            0.5, 
+            1.0
+         ], 
+         [
+            240.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            0.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            0.0, 
+            0.0, 
+            1.0
+         ], 
+         [
+            120.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            240.0, 
+            0.5, 
+            1.0
+         ], 
+         [
+            0.0, 
+            0.5, 
+            1.0
+         ]
+      ], 
+      "nback": {
+         "count": 0, 
+         "responseTimes": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "stimShown": [
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0
+         ], 
+         "responses": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "lastShown": 0
+      }, 
+      "outputDir": "/Users/kaandonbekci/dev/pervasivetech/Room/pilot/output/8/", 
+      "arithmetic": {
+         "count": 0, 
+         "responseTimes": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "stimShown": [
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0
+         ], 
+         "responses": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "lastShown": 0
+      }
+   }, 
+   "time": "2018-08-14 17:51:15.927773"
+}

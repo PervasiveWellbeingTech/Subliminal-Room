@@ -1,0 +1,120 @@
+{
+   "note": "nback completed", 
+   "experiment": {
+      "firstArithmetic": false, 
+      "blockCount": 0, 
+      "participantNo": 11, 
+      "saveCount": 1, 
+      "colors": [
+         [
+            120.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            0.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            0.0, 
+            0.5, 
+            1.0
+         ], 
+         [
+            240.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            120.0, 
+            0.5, 
+            1.0
+         ], 
+         [
+            0.0, 
+            0.0, 
+            1.0
+         ], 
+         [
+            240.0, 
+            0.5, 
+            1.0
+         ]
+      ], 
+      "nback": {
+         "count": 1, 
+         "responseTimes": [
+            [
+               -1, 
+               -1, 
+               -1, 
+               -1
+            ], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "stimShown": [
+            4, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0
+         ], 
+         "responses": [
+            [
+               -1, 
+               -1, 
+               -1, 
+               -1
+            ], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "lastShown": 4
+      }, 
+      "outputDir": "/Users/kaandonbekci/dev/pervasivetech/Room/pilot/output/11/", 
+      "arithmetic": {
+         "count": 0, 
+         "responseTimes": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "stimShown": [
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0
+         ], 
+         "responses": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "lastShown": 0
+      }
+   }, 
+   "time": "2018-08-14 18:23:33.560650"
+}

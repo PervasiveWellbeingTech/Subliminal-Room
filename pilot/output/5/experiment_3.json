@@ -1,0 +1,130 @@
+{
+   "note": "nback aborted", 
+   "experiment": {
+      "firstArithmetic": true, 
+      "blockCount": 2, 
+      "participantNo": 5, 
+      "saveCount": 3, 
+      "colors": [
+         [
+            0.0, 
+            0.5, 
+            1.0
+         ], 
+         [
+            120.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            120.0, 
+            0.5, 
+            1.0
+         ], 
+         [
+            240.0, 
+            0.5, 
+            1.0
+         ], 
+         [
+            0.0, 
+            0.0, 
+            1.0
+         ], 
+         [
+            0.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            240.0, 
+            1.0, 
+            1.0
+         ]
+      ], 
+      "nback": {
+         "count": 2, 
+         "responseTimes": [
+            [
+               -1, 
+               -1, 
+               -1, 
+               -1
+            ], 
+            [
+               -1, 
+               -1, 
+               -1, 
+               -1
+            ], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "stimShown": [
+            4, 
+            4, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0
+         ], 
+         "responses": [
+            [
+               -1, 
+               -1, 
+               -1, 
+               -1
+            ], 
+            [
+               -1, 
+               -1, 
+               -1, 
+               -1
+            ], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "lastShown": 8
+      }, 
+      "outputDir": "/Users/kaandonbekci/dev/pervasivetech/Room/pilot/output/5/", 
+      "arithmetic": {
+         "count": 0, 
+         "responseTimes": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "stimShown": [
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0
+         ], 
+         "responses": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "lastShown": 0
+      }
+   }, 
+   "time": "2018-08-14 10:48:32.135947"
+}
