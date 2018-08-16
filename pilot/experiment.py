@@ -32,7 +32,7 @@ def setupStimuli():
         # f = params['inputDir'] + params['nback']['inputDir'] + params['nback']['stimDir'] +  'a.svg'
         stim = visual.ImageStim(win, f, name=params['nback']['letters'][c])
         stimuli.append(stim)
-    print('Stimuli ✓')
+    print('Stimuli done')
 
 def setupClocks():
     global clocks
@@ -42,7 +42,7 @@ def setupClocks():
     'trial': clock.Clock(),
     'pause': clock.Clock()
     }
-    print('Clocks ✓')
+    print('Clocks done')
 
 def readMessageFile(msg, args = []):
     with open(params['path'] + params['promptDir'] + msg.name +'.txt') as f:
@@ -73,24 +73,24 @@ def setupMessages(): #better way to do this.
     readMessageFile(msg['nback-instructions'])
     readMessageFile(msg['arithmetic-instructions'])
     readMessageFile(msg['pause'], [params['pauseDur']])
-    print('Messages ✓')
+    print('Messages done')
 
 def setupFixation():
     global fixation
     fixation = visual.ShapeStim(win, lineWidth= 10, lineColor=[0, 0, 0],lineColorSpace='rgb255', vertices=((-.1, 0), (.1, 0), (0, 0), (0, .1), (0, -.1)), closeShape=False, name='fixation');
-    print('Fixation ✓')
+    print('Fixation done')
 
 def setupCheckCross():
     global check
     global cross
     check = visual.ShapeStim(win, lineWidth= 10, lineColor=[0, 0, 0], lineColorSpace='rgb255', vertices=((0.0, 0.0), (.1, -.1), (.3, .3)), closeShape=False, name='check')
     cross = visual.ShapeStim(win, lineWidth= 10, lineColor=[0, 0, 0], lineColorSpace='rgb255', vertices=((-.1, .1), (.1, -.1), (0.0, 0.0), (-.1, -.1), (.1, .1)), closeShape=False, name='cross')
-    print('Check and cross ✓')
+    print('Check and cross done')
 
 def setupWindow():
     global win
     win = visual.Window(params['resolution'], fullscr=params['fullScreen'], units=params['units'], color=params['initialScreenColor'], colorSpace=params['colorSpace'])
-    print('Window ✓')
+    print('Window done')
 
 def setupFilters():
     global filters
@@ -251,7 +251,7 @@ def init():
     setupStimuli()
     saveParameters('init complete')
     saveExperiment('init complete')
-    print('init complete ✓')
+    print('init complete done')
     # print experiment
 
 def saveParameters(note = None):
