@@ -12,6 +12,8 @@ import os
 import json
 import pprint as pp
 
+testing = True
+
 pprint = pp.PrettyPrinter(indent=4).pprint
 win, msg, check, cross, fixation, clocks, stimuli, experiment, params, firstTask, secondTask = None, None, None, None, None, None, None, None, None, None, None
 ongoing, newExperiment = True, True
@@ -137,7 +139,10 @@ def setupParameters():
             'practiceDur': 1 * 60
         }
         params['nBlocks'] = len(params['hues']) * len(params['saturations']) * len(params['values']) + 1
-        params['outputDir'] = params['path'] + 'pilot/output/'
+        if testing:
+            params['outputDir'] = params['path'] + 'pilot/output/test/'
+        else:
+            params['outputDir'] = params['path'] + 'pilot/output/'
 
         # params['nback']['blockTime'] = 5 * 60
         params['arithmetic'] = {}
