@@ -11,10 +11,10 @@ import random
 import os
 import json
 import pprint as pp
+pprint = pp.PrettyPrinter(indent=4).pprint
 
 testing = True
 
-pprint = pp.PrettyPrinter(indent=4).pprint
 win, msg, check, cross, fixation, clocks, stimuli, experiment, params, firstTask, secondTask = None, None, None, None, None, None, None, None, None, None, None
 ongoing, newExperiment = True, True
 
@@ -445,36 +445,25 @@ def pause(sec): #sliders for feedback
     win.flip()
     event.waitKeys(keyList=params['continueKey'])
 
-init()
-showBeginningMessages()
-# practice()
-clocks['experiment'].reset()
-while ongoing:
-    firstTask()
-    secondTask()
-    experiment['blockCount'] += 1
+def runExperiment():
+    showBeginningMessages()
+    # practice()
+    clocks['experiment'].reset()
+    while ongoing:
+        firstTask()
+        secondTask()
+        experiment['blockCount'] += 1
+        # pprint(experiment)
+        # pause(5)
+        pause(params['pauseDur'])
+        if experiment['blockCount'] is params['nBlocks']:
+            ongoing = False
+    experiment['experimentDuration'] = clocks['experiment'].getTime()
     # pprint(experiment)
-    # pause(5)
-    pause(params['pauseDur'])
-    if experiment['blockCount'] is params['nBlocks']:
-        ongoing = False
-experiment['experimentDuration'] = clocks['experiment'].getTime()
-# pprint(experiment)
-saveExperiment('end of experiment')
-msg['continue'].draw()
-win.flip()
-event.waitKeys(keyList=params['continueKey'])
+    saveExperiment('end of experiment')
+    msg['continue'].draw()
+    win.flip()
+    event.waitKeys(keyList=params['continueKey'])
 
-
-# # for frameN in range(100):#for exactly 100 frames
-#     win.flip()
-
-# s = sound.backend_pyo.SoundPyo('/Users/kaandonbekci/dev/pervasivetech/Room/pilot/110Hz_1.0osc.wav', loops=1)
-# s.play()
-
-
-
-# for i in range(65, 91):
-#     c = chr(i)
-#
-#     print(chr(i))
+init()
+runExperiment()
