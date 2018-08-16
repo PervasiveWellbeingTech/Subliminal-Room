@@ -1,0 +1,110 @@
+{
+   "note": "nback aborted", 
+   "experiment": {
+      "firstArithmetic": true, 
+      "blockCount": 0, 
+      "participantNo": 14, 
+      "saveCount": 1, 
+      "colors": [
+         [
+            240.0, 
+            0.5, 
+            1.0
+         ], 
+         [
+            0.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            120.0, 
+            0.5, 
+            1.0
+         ], 
+         [
+            240.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            120.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            0.0, 
+            0.5, 
+            1.0
+         ], 
+         [
+            0.0, 
+            0.0, 
+            1.0
+         ]
+      ], 
+      "nback": {
+         "count": 0, 
+         "responseTimes": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "stimShown": [
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0
+         ], 
+         "responses": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "lastShown": 0
+      }, 
+      "outputDir": "/home/kaan/dev/pervasivetech/Room/pilot/output/14/", 
+      "arithmetic": {
+         "count": 0, 
+         "responseTimes": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "stimShown": [
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0
+         ], 
+         "responses": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "lastShown": 0
+      }
+   }, 
+   "time": "2018-08-15 19:09:48.330911"
+}
