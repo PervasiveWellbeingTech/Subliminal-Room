@@ -538,7 +538,7 @@ def pause(sec): #sliders for feedback
 if __name__ == "__main__":
     init()
     showBeginningMessages()
-    # practice()
+    practice()
     clocks['experiment'].reset()
     while ongoing:
         firstTask()
