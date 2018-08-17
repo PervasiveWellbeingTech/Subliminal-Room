@@ -16,7 +16,7 @@ pprint = pp.PrettyPrinter(indent=4).pprint
 
 testing = False
 outputDir = libs.path + 'pilot/output/' + ('test/' if testing else '')
-win, msg, check, cross, fixation, clocks, stimuli, experiment, params, firstTask, secondTask = None, None, None, None, None, None, None, None, None, None, None
+win, msg, check, cross, fixation, clocks, stimuli, experiment, params, firstTask, ratingScale, secondTask = None, None, None, None, None, None, None, None, None, None, None, None
 ongoing, newExperiment = True, True
 
 def twiceFlip():
@@ -67,11 +67,11 @@ def setupMessages(): #better way to do this.
         'pause': createMessage('pause-message'),
         'arithmetic-instructions': createMessage('arithmetic-instructions-message'),
         'completion': createMessage('completion-message'),
-        'nback-alert': createMessage('nback-alert'),
-        'arithmetic-alert': createMessage('arithmetic-alert'),
-        'stress-questionaire' : createMessage('stress-questionaire'),
-        'enjoyment-questionaire' : createMessage('enjoyment-questionaire'),
-        'concentration-questionaire' : createMessage('concentration-questionaire'),
+        'nback-alert': createMessage('nback-alert-message'),
+        'arithmetic-alert': createMessage('arithmetic-alert-message'),
+        'stress-questionaire' : createMessage('stress-questionaire-message'),
+        'valence-questionaire' : createMessage('valence-questionaire-message'),
+        'concentration-questionaire' : createMessage('concentration-questionaire-message'),
     }
     readMessageFile(msg['continue'], [params['continueKey'].upper()])
     readMessageFile(msg['welcome'], [params['nback']['blockTime'] / 60, params['arithmetic']['blockTime'] / 60, params['pauseDur'], params['continueKey'].upper()])
@@ -80,12 +80,19 @@ def setupMessages(): #better way to do this.
     readMessageFile(msg['pause'], [params['pauseDur']])
     readMessageFile(msg['nback-alert'])
     readMessageFile(msg['arithmetic-alert'])
+    readMessageFile(msg['stress-questionaire'])
+    readMessageFile(msg['valence-questionaire'])
+    readMessageFile(msg['concentration-questionaire'])
     print('Messages done.')
 
 def setupFixation():
     global fixation
     fixation = visual.ShapeStim(win, lineWidth= 10, lineColor=[0, 0, 0],lineColorSpace='rgb255', vertices=((-.1, 0), (.1, 0), (0, 0), (0, .1), (0, -.1)), closeShape=False, name='fixation');
     print('Fixation done.')
+
+def setupRatingScale():
+    global ratingScale
+    ratingScale = visual.RatingScale(win, low=1, high=10, noMouse=True, markerStart=5.5, lineColor='black', stretch=2.0, labels=('1','2','3','4','5','6','7','8','9','10'), markerColor='black', scale=None, acceptPreText='')
 
 def setupCheckCross():
     global check
@@ -140,7 +147,8 @@ def setupParameters():
             'values': [1.0],
             'white': [0.0, 0.0, 1.0],
             'taskMessageTime': 2,
-            'practiceDur': 10 if testing else 1 * 60
+            'practiceDur': 10 if testing else 1 * 60,
+            'questionaireDur': 20 if testing else 1 * 60,
         }
         params['nBlocks'] = len(params['hues']) * len(params['saturations']) * len(params['values']) + 1
         params['outputDir'] = params['path'] + 'pilot/output/' + ('test/' if testing else '')
@@ -209,15 +217,28 @@ def setupExperiment():
         nbackResponseTimes = [None] * params['nBlocks']
         nbackResponses = [None] * params['nBlocks']
         nbackStimShown = [0] * params['nBlocks']
+        nbackQuestionaire = [None] * params['nBlocks']
         arithmeticResponseTimes = [None] * params['nBlocks']
         arithmeticResponses = [None] * params['nBlocks']
         arithmeticStimShown = [0] * params['nBlocks']
+        arithmeticQuestionaire = [None] * params['nBlocks']
+
 
         for i in range(params['nBlocks']):
             nbackResponseTimes[i] = []
             arithmeticResponseTimes[i] = []
             nbackResponses[i] = []
             arithmeticResponses[i] = []
+            nbackQuestionaire[i] = {
+                'stress': -1,
+                'valence': -1,
+                'concentration': -1
+            }
+            arithmeticQuestionaire[i] = {
+                'stress': -1,
+                'valence': -1,
+                'concentration': -1
+            }
 
         experiment = {
             'saveCount': 0,
@@ -227,14 +248,16 @@ def setupExperiment():
                 'lastShown': 0,
                 'responses': nbackResponses,
                 'responseTimes': nbackResponseTimes,
-                'stimShown': nbackStimShown
+                'stimShown': nbackStimShown,
+                'questionaire': nbackQuestionaire
             },
             'arithmetic': {
                 'count': 0,
                 'lastShown': 0,
                 'responses': arithmeticResponses,
                 'responseTimes': arithmeticResponseTimes,
-                'stimShown': arithmeticStimShown
+                'stimShown': arithmeticStimShown,
+                'questionaire': arithmeticQuestionaire
             },
             'colors': colors,
             'participantNo': getParticipantNo(),
@@ -268,7 +291,6 @@ def init():
     loadId = None
     if len(sys.argv) > 1:
         sys.argv.reverse()
-        print sys.argv
         sys.argv.pop()
         nextIsLoadFile = False
         while len(sys.argv) > 0:
@@ -292,6 +314,7 @@ def init():
     setupClocks()
     setupWindow()
     setupFixation()
+    setupRatingScale()
     setupCheckCross()
     setupMessages()
     setupStimuli()
@@ -438,6 +461,7 @@ def nback(practice = False): # FIXME: first n stim should not have correct respo
         responseTimes.append(responseTime)
         curStim += 1
         stimShown += 1
+    questionaire(nback=True)
     experiment['nback']['lastShown'] = curStim #might be unneccesary as list is mallible
     experiment['nback']['stimShown'][nbackCount] = stimShown
     experiment['nback']['responseTimes'][nbackCount] = responseTimes
@@ -453,6 +477,35 @@ def arithmetic(practice = False):
 
 def arithmeticPractice():
     pass
+
+def questionaire(nback):
+    global experiment
+    clocks['block'].reset()
+    clocks['block'].add(params['questionaireDur'])
+    answers = None
+    if nback:
+        answers = experiment['nback']['questionaire'][experiment['nback']['count']]
+    else:
+        answers = experiment['arithmetic']['questionaire'][experiment['arithmetic']['count']]
+    msg['stress-questionaire'].draw()
+    while ratingScale.noResponse:
+        msg['stress-questionaire'].draw()
+        ratingScale.draw()
+        win.flip()
+    answers['stress'] = ratingScale.getRating()
+    ratingScale.reset()
+    while ratingScale.noResponse:
+        msg['valence-questionaire'].draw()
+        ratingScale.draw()
+        win.flip()
+    answers['valence'] = ratingScale.getRating()
+    ratingScale.reset()
+    while ratingScale.noResponse:
+        msg['concentration-questionaire'].draw()
+        ratingScale.draw()
+        win.flip()
+    answers['concentration'] = ratingScale.getRating()
+    ratingScale.reset()
 
 def practice():
     firstTask(practice = True)
@@ -485,13 +538,11 @@ def pause(sec): #sliders for feedback
 if __name__ == "__main__":
     init()
     showBeginningMessages()
-    practice()
+    # practice()
     clocks['experiment'].reset()
     while ongoing:
         firstTask()
-        questionaire()
         secondTask()
-        questionaire()
         experiment['blockCount'] += 1
         pause(params['pauseDur'])
         if experiment['blockCount'] is params['nBlocks']:
