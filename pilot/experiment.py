@@ -93,7 +93,7 @@ def setupCheckCross():
 
 def setupWindow():
     global win
-    win = visual.Window(params['resolution'], fullscr=params['fullScreen'], units=params['units'], color=params['initialScreenColor'], colorSpace=params['colorSpace'])
+    win = visual.Window(params['resolution'], fullscr=params['fullScreen'], screen=params['screenToShow'], units=params['units'], color=params['initialScreenColor'], colorSpace=params['colorSpace'])
     print('Window done.')
 
 def setupFilters():
@@ -120,17 +120,17 @@ def setupParameters():
         params = {
             'colorSpace': 'hsv',
             'continueKey': 't',        # key from scanner that says scan is starting
-            'fullScreen': True,       # run in full screen mode?
+            'fullScreen': True if testing else False,       # run in full screen mode?
             'hues': [0.0, 120.0, 240.0],
             'initialScreenColor':[0.0, 0.0, 1.0],
             'path': libs.path,
             'pauseDur': 5 if testing else 30,
             'promptDir': '/pilot/prompts/',  # directory containing prompts and questions files
-            'resolution': [1440, 900],
+            'resolution': [1920, 1080],
             'respAdvances': True,     # will a response end the stimulus?
             'responseKeys': ['space', 'backspace', 'q', 'r'],
             'saturations': [.5, 1.0],
-            'screenToShow': 0 if testing else 1 ,        # display on primary screen (0) or secondary (1)?
+            'screenToShow': 0 if testing else 1,        # display on primary screen (0) or secondary (1)?
             'skipPrompts': False,     # go right to the scanner-wait page
             'textColor': [0.0, 0.0, 0.0],
             'units': 'norm',
@@ -255,7 +255,7 @@ def createOutputDir():
     return dir + '/'
 
 def getParticipantNo():
-    cur = sum(os.path.isdir(os.path.join(params['outputDir'], i)) for i in os.listdir(params['outputDir']))
+    cur = sum(os.path.isdir(os.path.join(params['outputDir'], i)) for i in os.listdir(params['outputDir'])) - 1
     if newExperiment:
         cur += 1
     return cur
