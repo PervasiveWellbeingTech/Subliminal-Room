@@ -68,7 +68,10 @@ def setupMessages(): #better way to do this.
         'arithmetic-instructions': createMessage('arithmetic-instructions-message'),
         'completion': createMessage('completion-message'),
         'nback-alert': createMessage('nback-alert'),
-        'arithmetic-alert': createMessage('arithmetic-alert')
+        'arithmetic-alert': createMessage('arithmetic-alert'),
+        'stress-questionaire' : createMessage('stress-questionaire'),
+        'enjoyment-questionaire' : createMessage('enjoyment-questionaire'),
+        'concentration-questionaire' : createMessage('concentration-questionaire'),
     }
     readMessageFile(msg['continue'], [params['continueKey'].upper()])
     readMessageFile(msg['welcome'], [params['nback']['blockTime'] / 60, params['arithmetic']['blockTime'] / 60, params['pauseDur'], params['continueKey'].upper()])
