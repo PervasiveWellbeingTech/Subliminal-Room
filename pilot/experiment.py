@@ -255,7 +255,7 @@ def createOutputDir():
     return dir + '/'
 
 def getParticipantNo():
-    cur = sum(os.path.isdir(os.path.join(params['outputDir'], i)) for i in os.listdir(params['outputDir'])) - 1
+    cur = sum(os.path.isdir(os.path.join(params['outputDir'], i)) for i in os.listdir(params['outputDir'])) - (0 if testing else 1)
     if newExperiment:
         cur += 1
     return cur
