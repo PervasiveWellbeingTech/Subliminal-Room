@@ -178,6 +178,10 @@ def setupParameters():
     else:
         print('load parameters')
 
+def loadExperiment(id):
+    paramsFile = 
+    with open(params['outputDir'])
+
 def setupExperiment():
     global experiment
     if newExperiment:
