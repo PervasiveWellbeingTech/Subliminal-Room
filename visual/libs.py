@@ -1,10 +1,12 @@
 import sys
 import signal
 import platform
-paths = {'Darwin': '/Users/kaandonbekci/dev/pervasivetech/Room/',
-        'Windows': '',
-        'Linux': '/home/kaan/dev/pervasivetech/Room/'}
-path = paths[platform.system()]
+import getpass
+username = getpass.getuser()
+paths = {'Darwin': '/Users/{}/dev/pervasivetech/Room/'.format(username),
+        'Windows': 'C:/Users/{}/dev/pervasivetech/Room/'.format(username)}
+OS = platform.system()
+path = paths[OS]
 sys.path.insert(0, path+'visual/lib')
 sys.path.insert(0, path+'audiotory/lib')
 sys.path.insert(0, path+'tactile/lib')

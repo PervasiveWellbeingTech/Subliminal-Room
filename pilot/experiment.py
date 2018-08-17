@@ -11,10 +11,11 @@ import random
 import os
 import json
 import pprint as pp
+import sys
 pprint = pp.PrettyPrinter(indent=4).pprint
 
-testing = True
-
+testing = False
+outputDir = libs.path + 'pilot/output/' + ('test/' if testing else '')
 win, msg, check, cross, fixation, clocks, stimuli, experiment, params, firstTask, secondTask = None, None, None, None, None, None, None, None, None, None, None
 ongoing, newExperiment = True, True
 
@@ -51,11 +52,10 @@ def readMessageFile(msg, args = []):
         data = f.read().strip()
         if len(args) is not 0:
             data=data.format(*args)
-        print('Read {}.txt'.format(msg.name))
-    msg.setText(data)
+        msg.setText(data)
 
 def createMessage(str):
-    return visual.TextStim(win, pos=[0,-.5], wrapWidth=1.5, color=params['textColor'], colorSpace=params['colorSpace'],
+    return visual.TextStim(win, pos=[0, 0], wrapWidth=1.5, color=params['textColor'], colorSpace=params['colorSpace'],
     alignHoriz='center', name=str)
 
 def setupMessages(): #better way to do this.
@@ -71,10 +71,12 @@ def setupMessages(): #better way to do this.
         'arithmetic-alert': createMessage('arithmetic-alert')
     }
     readMessageFile(msg['continue'], [params['continueKey'].upper()])
-    readMessageFile(msg['welcome'], [params['nback']['blockTime'], params['arithmetic']['blockTime'], params['pauseDur'], params['continueKey'].upper()])
+    readMessageFile(msg['welcome'], [params['nback']['blockTime'] / 60, params['arithmetic']['blockTime'] / 60, params['pauseDur'], params['continueKey'].upper()])
     readMessageFile(msg['nback-instructions'])
     readMessageFile(msg['arithmetic-instructions'])
     readMessageFile(msg['pause'], [params['pauseDur']])
+    readMessageFile(msg['nback-alert'])
+    readMessageFile(msg['arithmetic-alert'])
     print('Messages done.')
 
 def setupFixation():
@@ -122,8 +124,7 @@ def setupParameters():
             'hues': [0.0, 120.0, 240.0],
             'initialScreenColor':[0.0, 0.0, 1.0],
             'path': libs.path,
-            'pauseDur': 5,
-            # 'pauseDur': 30,
+            'pauseDur': 5 if testing else 30,
             'promptDir': '/pilot/prompts/',  # directory containing prompts and questions files
             'resolution': [1440, 900],
             'respAdvances': True,     # will a response end the stimulus?
@@ -136,7 +137,7 @@ def setupParameters():
             'values': [1.0],
             'white': [0.0, 0.0, 1.0],
             'taskMessageTime': 2,
-            'practiceDur': 1 * 60
+            'practiceDur': 10 if testing else 1 * 60
         }
         params['nBlocks'] = len(params['hues']) * len(params['saturations']) * len(params['values']) + 1
         params['outputDir'] = params['path'] + 'pilot/output/' + ('test/' if testing else '')
@@ -151,36 +152,45 @@ def setupParameters():
         params['arithmetic']['firstStimDelay'] = 1
         params['arithmetic']['inputDir'] = 'arithmetic/'
         params['arithmetic']['inputNo'] = '1'
-        params['arithmetic']['ISI'] = [None] * params['nBlocks'] # FIXME: change this same ISI for blocks
-        params['arithmetic']['stimDur'] = [None] * params['nBlocks']
+        params['arithmetic']['ISI'] = 1
+        params['arithmetic']['stimDur'] = 5
         params['inputDir'] = params['path'] + 'pilot/input/'
         params['nback'] = {}
-        params['nback']['blockTime'] = 10
-        params['nback']['firstStimDelay'] = 2
+        params['nback']['blockTime'] = 10 if testing else 5 * 60
+        params['nback']['firstStimDelay'] = 1
         params['nback']['inputDir'] = 'nback/'
         params['nback']['setupDir'] = 'JSON/'
         params['nback']['stimDir'] = 'letters/'
         params['nback']['inputNo'] = '1'
-        params['nback']['ISI'] = [None] * params['nBlocks']
-                #              0    1    2    3    4    5    6    7    8    9    10   11   12   13   14
+        params['nback']['ISI'] = .5
+                #                        0    1    2    3    4    5    6    7    8    9    10   11   12   13   14
         # params['nback']['letters'] = ['A', 'B', 'C', 'D', 'E', 'H', 'I', 'K', 'L', 'M', 'O', 'P', 'R', 'S', 'T']
-        params['nback']['n'] = [None] * params['nBlocks']
-        params['nback']['stimDur'] = [None] * params['nBlocks']
+        params['nback']['n'] = 2
+        params['nback']['stimDur'] = 2
 
-        for i in range(params['nBlocks']):
-            params['arithmetic']['ISI'][i] = 1.5
-            params['arithmetic']['stimDur'][i] = 6
-            params['nback']['ISI'][i] = .5
-            params['nback']['n'][i] = 2
-            params['nback']['stimDur'][i] = 2
+        # for i in range(params['nBlocks']):
+        #     params['arithmetic']['ISI'][i] = 1.5
+        #     params['arithmetic']['stimDur'][i] = 6
+        #     params['nback']['ISI'][i] = .5
+        #     params['nback']['n'][i] = 2
+        #     params['nback']['stimDur'][i] = 2
 
         loadNbackSetup()
     else:
         print('load parameters')
 
-def loadExperiment(id):
-    paramsFile = 
-    with open(params['outputDir'])
+def load(loadId):
+    global params
+    global experiment
+    dir = outputDir + str(loadId) + '/'
+    files = os.listdir(dir)
+    files.sort()
+    paramsFileLoc = dir + files.pop()
+    experimentFileLoc = dir + files.pop()
+    with open(paramsFileLoc) as paramsFile:
+        params = json.load(paramsFile)['params']
+    with open(experimentFileLoc) as experimentFile:
+        experiment = json.load(experimentFile)['experiment']
 
 def setupExperiment():
     global experiment
@@ -240,7 +250,7 @@ def randomize():
     (firstTask, secondTask) = (arithmetic, nback) if experiment['firstArithmetic'] else (nback, arithmetic)
 
 def createOutputDir():
-    dir = params['outputDir']+str(experiment['participantNo'])
+    dir = params['outputDir'] + str(experiment['participantNo'])
     os.mkdir(dir)
     return dir + '/'
 
@@ -251,18 +261,38 @@ def getParticipantNo():
     return cur
 
 def init():
-    setupParameters()
-    setupExperiment()
+    global testing
+    loadId = None
+    if len(sys.argv) > 1:
+        sys.argv.reverse()
+        print sys.argv
+        sys.argv.pop()
+        nextIsLoadFile = False
+        while len(sys.argv) > 0:
+            arg = sys.argv.pop()
+            if nextIsLoadFile:
+                loadId = arg
+                nextIsLoadFile = False
+            else:
+                if arg  == 'test':
+                    testing = True
+                elif arg == 'load':
+                    nextIsLoadFile = True
+    print('Testing mode: {}'.format(testing))
+    if loadId is not None:
+        load(loadId)
+    else:
+        setupParameters()
+        setupExperiment()
+        saveParameters('init complete')
+        saveExperiment('init complete')
     setupClocks()
     setupWindow()
     setupFixation()
     setupCheckCross()
     setupMessages()
     setupStimuli()
-    saveParameters('init complete')
-    saveExperiment('init complete')
-    print('init complete done.')
-    # print experiment
+    print('init done.')
 
 def saveParameters(note = None):
     saveFile = {}
@@ -295,33 +325,31 @@ def nbackPractice():
     global experiment
     curStim = experiment['nback']['lastShown']
     stimShown = 0
-    win.color = params['white']
-    twiceFlip()
-    # msg['nback'].draw()
+    # win.color = params['white']
+    # twiceFlip()
+    msg['nback-alert'].draw()
     clocks['trial'].reset()
     clocks['trial'].add(params['taskMessageTime'])
-    win.flip()
-    wait(clocks['trial'])
-    clocks['trial'].add(params['nback']['firstStimDelay'])
     win.flip()
     wait(clocks['trial'])
     clocks['block'].reset()
     clocks['block'].add(params['practiceDur'])
     clocks['trial'].reset()
-    clocks['trial'].add(params['nback']['ISI'][0])
+    clocks['trial'].add(params['nback']['ISI'])
+    win.flip()
     while clocks['block'].getTime() < 0:
         index = params['nback']['sequence'][curStim]
         stimuli[index].draw()
         keys = []
         wait(clocks['trial'])
         clocks['trial'].reset()
-        clocks['trial'].add(params['nback']['stimDur'][0])
+        clocks['trial'].add(params['nback']['stimDur'])
         win.flip()
         while clocks['trial'].getTime()<0 and len(keys) is 0:
             keys = event.getKeys(keyList=params['responseKeys'])
-        responseTime = params['nback']['stimDur'][0] + clocks['trial'].getTime()
+        responseTime = params['nback']['stimDur'] + clocks['trial'].getTime()
         clocks['trial'].reset()
-        clocks['trial'].add(params['nback']['ISI'][0])
+        clocks['trial'].add(params['nback']['ISI'])
         resp = -1
         if len(keys) is 0: #did not respond
             responseTime = -1
@@ -330,18 +358,19 @@ def nbackPractice():
             if str(keys[0][0]) is 'q':
                 saveExperiment('nback aborted')
                 exit()
-            if str(keys[0][0]) is 'r':
+            elif str(keys[0][0]) is 'r':
                 print('skipping')
                 return
-            resp = 0
-            if str(keys[0][0]) is 's':
-                resp = 1
-            if resp is params['nback']['correctResponses'][str(n)][curStim]: #correct
-                print('correct')
-                check.draw()
-            else: #wrong
-                print('wrong')
-                cross.draw()
+            else:
+                resp = 0
+                if str(keys[0][0]) is 's':
+                    resp = 1
+                if resp is params['nback']['correctResponses'][str(params['nback']['n'])][curStim]: #correct
+                    print('correct')
+                    check.draw()
+                else: #wrong
+                    print('wrong')
+                    cross.draw()
         win.flip()
         curStim += 1
         stimShown += 1
@@ -359,31 +388,29 @@ def nback(practice = False): # FIXME: first n stim should not have correct respo
     responseTimes = []
     win.color = experiment['colors'][nbackCount]
     twiceFlip()
-    # msg['nback'].draw()
+    msg['nback-alert'].draw()
     clocks['trial'].reset()
     clocks['trial'].add(params['taskMessageTime'])
-    win.flip()
-    wait(clocks['trial'])
-    clocks['trial'].add(params['nback']['firstStimDelay'])
     win.flip()
     wait(clocks['trial'])
     clocks['block'].reset()
     clocks['block'].add(params['nback']['blockTime'])
     clocks['trial'].reset()
-    clocks['trial'].add(params['nback']['ISI'][nbackCount])
+    clocks['trial'].add(params['nback']['ISI'])
+    win.flip()
     while clocks['block'].getTime() < 0:
         index = params['nback']['sequence'][curStim]
         stimuli[index].draw()
         keys = []
         wait(clocks['trial'])
         clocks['trial'].reset()
-        clocks['trial'].add(params['nback']['stimDur'][nbackCount])
+        clocks['trial'].add(params['nback']['stimDur'])
         win.flip()
         while clocks['trial'].getTime()<0 and len(keys) is 0:
             keys = event.getKeys(keyList=params['responseKeys'])
-        responseTime = params['nback']['stimDur'][nbackCount] + clocks['trial'].getTime()
+        responseTime = params['nback']['stimDur'] + clocks['trial'].getTime()
         clocks['trial'].reset()
-        clocks['trial'].add(params['nback']['ISI'][nbackCount])
+        clocks['trial'].add(params['nback']['ISI'])
         resp = -1
         if len(keys) is 0: #did not respond
             responseTime = -1
@@ -392,18 +419,17 @@ def nback(practice = False): # FIXME: first n stim should not have correct respo
             if str(keys[0][0]) is 'q':
                 saveExperiment('nback aborted')
                 exit()
-            if str(keys[0][0]) is 'r':
+            elif str(keys[0][0]) is 'r':
                 print('skipping')
                 return
-            resp = 0
-            if str(keys[0][0]) is 's':
-                resp = 1
-            if resp is params['nback']['correctResponses'][str(n)][curStim]: #correct
-                print('correct')
-                check.draw()
-            else: #wrong
-                print('wrong')
-                cross.draw()
+            else:
+                resp = 0
+                if str(keys[0][0]) is 's':
+                    resp = 1
+                if resp is params['nback']['correctResponses'][str(params['nback']['n'])][curStim]: #correct
+                    check.draw()
+                else: #wrong
+                    cross.draw()
         win.flip()
         responses.append(resp)
         responseTimes.append(responseTime)
@@ -450,23 +476,20 @@ def pause(sec): #sliders for feedback
     win.flip()
     event.waitKeys(keyList=params['continueKey'])
 
-init()
-
-showBeginningMessages()
-# practice()
-clocks['experiment'].reset()
-while ongoing:
-    firstTask()
-    secondTask()
-    experiment['blockCount'] += 1
-    # pprint(experiment)
-    # pause(5)
-    pause(params['pauseDur'])
-    if experiment['blockCount'] is params['nBlocks']:
-        ongoing = False
-experiment['experimentDuration'] = clocks['experiment'].getTime()
-# pprint(experiment)
-saveExperiment('end of experiment')
-msg['continue'].draw()
-win.flip()
-event.waitKeys(keyList=params['continueKey'])
+if __name__ == "__main__":
+    init()
+    showBeginningMessages()
+    practice()
+    clocks['experiment'].reset()
+    while ongoing:
+        firstTask()
+        secondTask()
+        experiment['blockCount'] += 1
+        pause(params['pauseDur'])
+        if experiment['blockCount'] is params['nBlocks']:
+            ongoing = False
+    experiment['experimentDuration'] = clocks['experiment'].getTime()
+    saveExperiment('end of experiment')
+    msg['continue'].draw()
+    win.flip()
+    event.waitKeys(keyList=params['continueKey'])

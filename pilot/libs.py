@@ -3,7 +3,6 @@ import signal
 import platform
 import getpass
 username = getpass.getuser()
-print username
 paths = {'Darwin': '/Users/{}/dev/pervasivetech/Room/'.format(username),
         'Windows': 'C:/Users/{}/dev/pervasivetech/Room/'.format(username)}
 OS = platform.system()
