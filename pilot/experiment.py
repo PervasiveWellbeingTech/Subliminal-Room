@@ -72,7 +72,7 @@ def setupMessages(): #better way to do this.
     }
     readMessageFile(msg['continue'], [params['continueKey'].upper()])
     readMessageFile(msg['welcome'], [params['nback']['blockTime'] / 60, params['arithmetic']['blockTime'] / 60, params['pauseDur'], params['continueKey'].upper()])
-    readMessageFile(msg['nback-instructions'])
+    readMessageFile(msg['nback-instructions'], [params['nback']['n'], params['continueKey'].upper()])
     readMessageFile(msg['arithmetic-instructions'])
     readMessageFile(msg['pause'], [params['pauseDur']])
     readMessageFile(msg['nback-alert'])
@@ -459,6 +459,9 @@ def showBeginningMessages():
     msg['welcome'].draw()
     win.flip()
     event.waitKeys(keyList=params['continueKey'])
+    msg['nback-instructions'].draw()
+    win.flip()
+    event.waitKeys(keyList=params['continueKey'])
     msg['continue'].draw()
     win.flip()
     event.waitKeys(keyList=params['continueKey'])
@@ -483,7 +486,9 @@ if __name__ == "__main__":
     clocks['experiment'].reset()
     while ongoing:
         firstTask()
+        questionaire()
         secondTask()
+        questionaire()
         experiment['blockCount'] += 1
         pause(params['pauseDur'])
         if experiment['blockCount'] is params['nBlocks']:

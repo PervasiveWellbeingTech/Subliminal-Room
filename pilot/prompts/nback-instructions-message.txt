@@ -1,0 +1,1 @@
+In the MEMORY task, you will be presented with letters on the screen. You are asked to press "SPACE BAR" if the letter you see matches the letter you saw {} steps back. If it does not match, you should press "BACKSPACE". Try to answer as quickly as possible. Press "{}" to continue

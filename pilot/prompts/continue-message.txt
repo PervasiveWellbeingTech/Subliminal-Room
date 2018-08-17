@@ -1,1 +1,1 @@
-If you have any questions, ask the assistant now. Press {} to begin the experiment.
+If you have any questions, ask the assistant now. Press "{}" to continue.
