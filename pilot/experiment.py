@@ -399,7 +399,8 @@ def nbackPractice():
         stimShown += 1
     experiment['nback']['lastShown'] = curStim #might be unneccesary as list is mallible
 
-def nback(practice = False): # FIXME: first n stim should not have correct responses
+def nback(practice = False):
+    # FIXME: first n stim should not have correct responses
     if practice:
         nbackPractice()
         return
@@ -461,9 +462,9 @@ def nback(practice = False): # FIXME: first n stim should not have correct respo
         responseTimes.append(responseTime)
         curStim += 1
         stimShown += 1
-    win.flip()
     clocks['trial'].reset()
     clocks['trial'].add(params['preQuestionaireDur'])
+    win.flip()
     print("Correct ratio = {}%".format(correct/stimShown * 100))
     print("Wrong ratio = {}%".format(wrong/stimShown * 100))
     print("No response ratio = {}%".format((stimShown - correct - wrong)/stimShown * 100))
