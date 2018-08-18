@@ -16,7 +16,6 @@ pprint = pp.PrettyPrinter(indent=4).pprint
 
 testing = False
 outputDir = libs.path + 'pilot/output/' + ('test/' if testing else '')
-win, msg, check, cross, fixation, clocks, stimuli, experiment, params, firstTask, ratingScale, secondTask = None, None, None, None, None, None, None, None, None, None, None, None
 ongoing, newExperiment = True, True
 
 def twiceFlip():
