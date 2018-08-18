@@ -1,0 +1,184 @@
+{
+   "note": "init complete", 
+   "experiment": {
+      "firstArithmetic": false, 
+      "blockCount": 0, 
+      "participantNo": 1, 
+      "saveCount": 0, 
+      "colors": [
+         [
+            120.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            0.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            0.0, 
+            0.0, 
+            1.0
+         ], 
+         [
+            240.0, 
+            0.5, 
+            1.0
+         ], 
+         [
+            240.0, 
+            1.0, 
+            1.0
+         ], 
+         [
+            120.0, 
+            0.5, 
+            1.0
+         ], 
+         [
+            0.0, 
+            0.5, 
+            1.0
+         ]
+      ], 
+      "nback": {
+         "count": 0, 
+         "questionaire": [
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }, 
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }, 
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }, 
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }, 
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }, 
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }, 
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }
+         ], 
+         "responses": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "lastShown": 0, 
+         "responseTimes": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "stimShown": [
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0
+         ]
+      }, 
+      "outputDir": "C:/Users/Kaan/dev/pervasivetech/Room/pilot/output/1/", 
+      "arithmetic": {
+         "count": 0, 
+         "questionaire": [
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }, 
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }, 
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }, 
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }, 
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }, 
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }, 
+            {
+               "stress": -1, 
+               "valence": -1, 
+               "concentration": -1
+            }
+         ], 
+         "responses": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "lastShown": 0, 
+         "responseTimes": [
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            [], 
+            []
+         ], 
+         "stimShown": [
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0
+         ]
+      }
+   }, 
+   "time": "2018-08-17 16:49:43.833000"
+}

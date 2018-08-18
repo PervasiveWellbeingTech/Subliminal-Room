@@ -130,7 +130,7 @@ def setupParameters():
         params = {
             'colorSpace': 'hsv',
             'continueKey': 't',        # key from scanner that says scan is starting
-            'fullScreen': True if testing else False,       # run in full screen mode?
+            'fullScreen': False,       # run in full screen mode?
             'hues': [0.0, 120.0, 240.0],
             'initialScreenColor':[0.0, 0.0, 1.0],
             'path': libs.path,
@@ -140,7 +140,7 @@ def setupParameters():
             'respAdvances': True,     # will a response end the stimulus?
             'responseKeys': ['space', 'backspace', 'q', 'r'],
             'saturations': [.5, 1.0],
-            'screenToShow': 0 if testing else 1,        # display on primary screen (0) or secondary (1)?
+            'screenToShow': 1,        # display on primary screen (0) or secondary (1)?
             'skipPrompts': False,     # go right to the scanner-wait page
             'textColor': [0.0, 0.0, 0.0],
             'units': 'norm',
@@ -149,6 +149,8 @@ def setupParameters():
             'taskMessageTime': 2,
             'practiceDur': 10 if testing else 1 * 60,
             'questionaireDur': 20 if testing else 1 * 60,
+            'preQuestionaireDur': 2,
+
         }
         params['nBlocks'] = len(params['hues']) * len(params['saturations']) * len(params['values']) + 1
         params['outputDir'] = params['path'] + 'pilot/output/' + ('test/' if testing else '')
@@ -379,23 +381,19 @@ def nbackPractice():
         resp = -1
         if len(keys) is 0: #did not respond
             responseTime = -1
-            print('no response')
         else:
             if str(keys[0][0]) is 'q':
                 saveExperiment('nback aborted')
                 exit()
             elif str(keys[0][0]) is 'r':
-                print('skipping')
                 return
             else:
                 resp = 0
                 if str(keys[0][0]) is 's':
                     resp = 1
                 if resp is params['nback']['correctResponses'][str(params['nback']['n'])][curStim]: #correct
-                    print('correct')
                     check.draw()
                 else: #wrong
-                    print('wrong')
                     cross.draw()
         win.flip()
         curStim += 1
@@ -410,6 +408,8 @@ def nback(practice = False): # FIXME: first n stim should not have correct respo
     nbackCount = experiment['nback']['count']
     curStim = experiment['nback']['lastShown']
     stimShown = 0
+    correct = 0
+    wrong = 0
     responses = []
     responseTimes = []
     win.color = experiment['colors'][nbackCount]
@@ -440,7 +440,6 @@ def nback(practice = False): # FIXME: first n stim should not have correct respo
         resp = -1
         if len(keys) is 0: #did not respond
             responseTime = -1
-            print('no response')
         else:
             if str(keys[0][0]) is 'q':
                 saveExperiment('nback aborted')
@@ -454,13 +453,22 @@ def nback(practice = False): # FIXME: first n stim should not have correct respo
                     resp = 1
                 if resp is params['nback']['correctResponses'][str(params['nback']['n'])][curStim]: #correct
                     check.draw()
+                    correct+=1
                 else: #wrong
                     cross.draw()
+                    wrong+=1
         win.flip()
         responses.append(resp)
         responseTimes.append(responseTime)
         curStim += 1
         stimShown += 1
+    win.flip()
+    clocks['trial'].reset()
+    clocks['trial'].add(params['preQuestionaireDur'])
+    print("Correct ratio = {}%".format(correct/stimShown * 100))
+    print("Wrong ratio = {}%".format(wrong/stimShown * 100))
+    print("No response ratio = {}%".format((stimShown - correct - wrong)/stimShown * 100))
+    wait(clocks['trial'])
     questionaire(nback=True)
     experiment['nback']['lastShown'] = curStim #might be unneccesary as list is mallible
     experiment['nback']['stimShown'][nbackCount] = stimShown
@@ -538,7 +546,7 @@ def pause(sec): #sliders for feedback
 if __name__ == "__main__":
     init()
     showBeginningMessages()
-    practice()
+    # practice()
     clocks['experiment'].reset()
     while ongoing:
         firstTask()
