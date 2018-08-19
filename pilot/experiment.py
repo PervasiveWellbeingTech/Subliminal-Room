@@ -8,6 +8,7 @@ warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 from psychopy import visual, core, sound, logging, event, clock
 import controller as hue
 import random
+import copy
 import os
 import json
 import pprint as pp
@@ -17,6 +18,9 @@ pprint = pp.PrettyPrinter(indent=4).pprint
 testing = False
 outputDir = libs.path + 'pilot/output/' + ('test/' if testing else '')
 ongoing, newExperiment = True, True
+
+def unixTime():
+    return clock.getAbsTime()
 
 def twiceFlip():
     win.flip()
@@ -153,12 +157,6 @@ def setupParameters():
         }
         params['nBlocks'] = len(params['hues']) * len(params['saturations']) * len(params['values']) + 1
         params['outputDir'] = params['path'] + 'pilot/output/' + ('test/' if testing else '')
-        # if testing:
-        #     params['outputDir'] = params['path'] + 'pilot/output/test/'
-        # else:
-        #     params['outputDir'] = params['path'] + 'pilot/output/'
-
-        # params['nback']['blockTime'] = 5 * 60
         params['arithmetic'] = {}
         params['arithmetic']['blockTime'] = 10 if testing else 5 * 60
         params['arithmetic']['firstStimDelay'] = 1
@@ -179,14 +177,6 @@ def setupParameters():
         # params['nback']['letters'] = ['A', 'B', 'C', 'D', 'E', 'H', 'I', 'K', 'L', 'M', 'O', 'P', 'R', 'S', 'T']
         params['nback']['n'] = 2
         params['nback']['stimDur'] = 2
-
-        # for i in range(params['nBlocks']):
-        #     params['arithmetic']['ISI'][i] = 1.5
-        #     params['arithmetic']['stimDur'][i] = 6
-        #     params['nback']['ISI'][i] = .5
-        #     params['nback']['n'][i] = 2
-        #     params['nback']['stimDur'][i] = 2
-
         loadNbackSetup()
     else:
         print('load parameters')
@@ -215,50 +205,36 @@ def setupExperiment():
                     colors.append(c)
 
         colors.append(params['white'])
-        nbackResponseTimes = [None] * params['nBlocks']
-        nbackResponses = [None] * params['nBlocks']
-        nbackStimShown = [0] * params['nBlocks']
-        nbackQuestionaire = [None] * params['nBlocks']
-        arithmeticResponseTimes = [None] * params['nBlocks']
-        arithmeticResponses = [None] * params['nBlocks']
-        arithmeticStimShown = [0] * params['nBlocks']
-        arithmeticQuestionaire = [None] * params['nBlocks']
-
-
+        listNBlocks = [[]] * params['nBlocks']
+        zeroNBlocks = [0] * params['nBlocks']
+        questionaire = [None] * params['nBlocks']
         for i in range(params['nBlocks']):
-            nbackResponseTimes[i] = []
-            arithmeticResponseTimes[i] = []
-            nbackResponses[i] = []
-            arithmeticResponses[i] = []
-            nbackQuestionaire[i] = {
+            questionaire[i] = {
                 'stress': -1,
                 'valence': -1,
                 'concentration': -1
             }
-            arithmeticQuestionaire[i] = {
-                'stress': -1,
-                'valence': -1,
-                'concentration': -1
-            }
-
         experiment = {
             'saveCount': 0,
             'blockCount': 0,
             'nback': {
                 'count': 0,
                 'lastShown': 0,
-                'responses': nbackResponses,
-                'responseTimes': nbackResponseTimes,
-                'stimShown': nbackStimShown,
-                'questionaire': nbackQuestionaire
+                'responses': {
+                    'corrected': copy.deepcopy(listNBlocks),
+                    'raw': copy.deepcopy(listNBlocks)
+                },
+                'responseTimes': copy.deepcopy(listNBlocks),
+                'stimShown': copy.deepcopy(zeroNBlocks),
+                'questionaire': copy.deepcopy(questionaire)
             },
             'arithmetic': {
                 'count': 0,
                 'lastShown': 0,
-                'responses': arithmeticResponses,
-                'responseTimes': arithmeticResponseTimes,
-                'stimShown': arithmeticStimShown,
-                'questionaire': arithmeticQuestionaire
+                'rawResponses': copy.deepcopy(listNBlocks),
+                'responseTimes': copy.deepcopy(listNBlocks),
+                'stimShown': copy.deepcopy(zeroNBlocks),
+                'questionaire': copy.deepcopy(questionaire)
             },
             'colors': colors,
             'participantNo': getParticipantNo(),
@@ -400,7 +376,7 @@ def nbackPractice():
     experiment['nback']['lastShown'] = curStim #might be unneccesary as list is mallible
 
 def nback(practice = False):
-    # FIXME: first n stim should not have correct responses
+    # FIXME: first n stim should not have correct rawResponses
     if practice:
         nbackPractice()
         return
@@ -410,7 +386,8 @@ def nback(practice = False):
     stimShown = 0
     correct = 0
     wrong = 0
-    responses = []
+    rawResponses = []
+    correctedResponses = []
     responseTimes = []
     win.color = experiment['colors'][nbackCount]
     twiceFlip()
@@ -438,30 +415,41 @@ def nback(practice = False):
         clocks['trial'].reset()
         clocks['trial'].add(params['nback']['ISI'])
         resp = -1
+        corrected = -1
         if len(keys) is 0: #did not respond
             responseTime = -1
         else:
             if str(keys[0][0]) is 'q':
                 saveExperiment('nback aborted')
                 exit()
-            elif str(keys[0][0]) is 'r':
-                print('skipping')
-                return
             else:
                 resp = 0
                 if str(keys[0][0]) is 's':
                     resp = 1
-                if resp is params['nback']['correctResponses'][str(params['nback']['n'])][curStim]: #correct
+                if stimShown < params['nback']['n']:
+                    if resp is 0:
+                        check.draw()
+                        corrected = 1
+                        correct+=1
+                    else:
+                        cross.draw()
+                        corrected = 0
+                        wrong+=1
+                elif resp is params['nback']['correctResponses'][str(params['nback']['n'])][curStim]: #correct
                     check.draw()
                     correct+=1
+                    corrected = 1
                 else: #wrong
                     cross.draw()
                     wrong+=1
+                    corrected = 0
         win.flip()
-        responses.append(resp)
+        rawResponses.append(resp)
+        correctedResponses.append(corrected)
         responseTimes.append(responseTime)
         curStim += 1
         stimShown += 1
+    wait(clocks['trial'])
     clocks['trial'].reset()
     clocks['trial'].add(params['preQuestionaireDur'])
     win.flip()
@@ -473,7 +461,8 @@ def nback(practice = False):
     experiment['nback']['lastShown'] = curStim #might be unneccesary as list is mallible
     experiment['nback']['stimShown'][nbackCount] = stimShown
     experiment['nback']['responseTimes'][nbackCount] = responseTimes
-    experiment['nback']['responses'][nbackCount] = responses
+    experiment['nback']['responses']['raw'][nbackCount] = rawResponses
+    experiment['nback']['responses']['corrected'][nbackCount] = correctedResponses
     experiment['nback']['count'] += 1
     saveExperiment('nback completed')
 
@@ -486,6 +475,16 @@ def arithmetic(practice = False):
 def arithmeticPractice():
     pass
 
+def askRating(msg):
+    while ratingScale.noResponse:
+        msg.draw()
+        ratingScale.draw()
+        win.flip()
+    rating = ratingScale.getRating()
+    ratingScale.reset()
+    return rating
+
+
 def questionaire(nback):
     global experiment
     clocks['block'].reset()
@@ -495,25 +494,9 @@ def questionaire(nback):
         answers = experiment['nback']['questionaire'][experiment['nback']['count']]
     else:
         answers = experiment['arithmetic']['questionaire'][experiment['arithmetic']['count']]
-    msg['stress-questionaire'].draw()
-    while ratingScale.noResponse:
-        msg['stress-questionaire'].draw()
-        ratingScale.draw()
-        win.flip()
-    answers['stress'] = ratingScale.getRating()
-    ratingScale.reset()
-    while ratingScale.noResponse:
-        msg['valence-questionaire'].draw()
-        ratingScale.draw()
-        win.flip()
-    answers['valence'] = ratingScale.getRating()
-    ratingScale.reset()
-    while ratingScale.noResponse:
-        msg['concentration-questionaire'].draw()
-        ratingScale.draw()
-        win.flip()
-    answers['concentration'] = ratingScale.getRating()
-    ratingScale.reset()
+    answers['stress'] = askRating(msg['stress-questionaire'])
+    answers['valence'] = askRating(msg['valence-questionaire'])
+    answers['concentration'] = askRating(msg['concentration-questionaire'])
 
 def practice():
     firstTask(practice = True)
