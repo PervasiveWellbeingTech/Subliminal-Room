@@ -469,8 +469,8 @@ def nback(practice = False):
     experiment['nback']['responses']['raw'][nbackCount] = rawResponses
     experiment['nback']['responses']['corrected'][nbackCount] = correctedResponses
     experiment['nback']['unixTimes'][nbackCount] = times
+    saveExperiment('nback {} completed.'.format(experiment['nback']['count']))
     experiment['nback']['count'] += 1
-    saveExperiment('nback completed')
 
 def arithmetic(practice = False):
     if practice:
@@ -498,6 +498,7 @@ def questionaire():
     answers['stress'] = askRating(msg['stress-questionaire'])
     answers['valence'] = askRating(msg['valence-questionaire'])
     answers['concentration'] = askRating(msg['concentration-questionaire'])
+    saveExperiment('questionaire {} completed.'.format(experiment['blockCount']))
 
 def practice():
     firstTask(practice = True)
@@ -527,21 +528,21 @@ def pause(sec):
     win.flip()
     event.waitKeys(keyList=params['continueKey'])
 
-if __name__ == "__main__":
-    init()
-    showBeginningMessages()
-    practice()
-    clocks['experiment'].reset()
-    while ongoing:
-        firstTask()
-        secondTask()
-        questionaire()
-        experiment['blockCount'] += 1
-        pause(params['pauseDur'])
-        if experiment['blockCount'] is params['nBlocks']:
-            ongoing = False
-    experiment['experimentDuration'] = clocks['experiment'].getTime()
-    saveExperiment('end of experiment')
-    msg['continue'].draw()
-    win.flip()
-    event.waitKeys(keyList=params['continueKey'])
+
+init()
+showBeginningMessages()
+practice()
+clocks['experiment'].reset()
+while ongoing:
+    firstTask()
+    secondTask()
+    questionaire()
+    experiment['blockCount'] += 1
+    pause(params['pauseDur'])
+    if experiment['blockCount'] is params['nBlocks']:
+        ongoing = False
+experiment['experimentDuration'] = clocks['experiment'].getTime()
+saveExperiment('end of experiment')
+msg['continue'].draw()
+win.flip()
+event.waitKeys(keyList=params['continueKey'])
