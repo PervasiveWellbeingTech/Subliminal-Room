@@ -345,6 +345,7 @@ def nbackPractice():
         stimuli[index].draw()
         keys = []
         wait(clocks['trial'])
+        event.clearEvents('keyboard')
         clocks['trial'].reset()
         clocks['trial'].add(params['nback']['stimDur'])
         win.flip()
@@ -380,7 +381,6 @@ def nbackPractice():
     print('Practice completed.')
 
 def nback(practice = False):
-    # FIXME: first n stim should not have correct rawResponses
     if practice:
         nbackPractice()
         return
@@ -412,6 +412,7 @@ def nback(practice = False):
         stimuli[index].draw()
         keys = []
         wait(clocks['trial'])
+        event.clearEvents('keyboard')
         clocks['trial'].reset()
         clocks['trial'].add(params['nback']['stimDur'])
         win.flip()
@@ -546,3 +547,6 @@ saveExperiment('end of experiment')
 msg['continue'].draw()
 win.flip()
 event.waitKeys(keyList=params['continueKey'])
+#ask which color liked most, hated most
+#difficulty, which one felt most difficult, least
+#how did you feel?
