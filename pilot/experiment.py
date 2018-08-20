@@ -151,7 +151,7 @@ def setupParameters():
             'white': [0.0, 0.0, 1.0],
             'taskMessageTime': 2,
             'practiceDur': 10 if testing else 1 * 60,
-            'questionaireDur': 20 if testing else 1 * 60,
+            'questionaireDur': 10 if testing else 1 * 30,
             'preQuestionaireDur': 2,
 
         }
@@ -226,7 +226,6 @@ def setupExperiment():
                 },
                 'responseTimes': copy.deepcopy(listNBlocks),
                 'stimShown': copy.deepcopy(zeroNBlocks),
-                'questionaire': copy.deepcopy(questionaire)
             },
             'arithmetic': {
                 'count': 0,
@@ -234,8 +233,8 @@ def setupExperiment():
                 'rawResponses': copy.deepcopy(listNBlocks),
                 'responseTimes': copy.deepcopy(listNBlocks),
                 'stimShown': copy.deepcopy(zeroNBlocks),
-                'questionaire': copy.deepcopy(questionaire)
             },
+            'questionaire': copy.deepcopy(questionaire),
             'colors': colors,
             'participantNo': getParticipantNo(),
         }
@@ -450,14 +449,10 @@ def nback(practice = False):
         curStim += 1
         stimShown += 1
     wait(clocks['trial'])
-    clocks['trial'].reset()
-    clocks['trial'].add(params['preQuestionaireDur'])
     win.flip()
     print("Correct ratio = {}%".format(correct/stimShown * 100))
     print("Wrong ratio = {}%".format(wrong/stimShown * 100))
     print("No response ratio = {}%".format((stimShown - correct - wrong)/stimShown * 100))
-    wait(clocks['trial'])
-    questionaire(nback=True)
     experiment['nback']['lastShown'] = curStim #might be unneccesary as list is mallible
     experiment['nback']['stimShown'][nbackCount] = stimShown
     experiment['nback']['responseTimes'][nbackCount] = responseTimes
@@ -484,16 +479,11 @@ def askRating(msg):
     ratingScale.reset()
     return rating
 
-
 def questionaire(nback):
     global experiment
     clocks['block'].reset()
     clocks['block'].add(params['questionaireDur'])
-    answers = None
-    if nback:
-        answers = experiment['nback']['questionaire'][experiment['nback']['count']]
-    else:
-        answers = experiment['arithmetic']['questionaire'][experiment['arithmetic']['count']]
+    answers = experiment['questionaire'][experiment['blockCount']]
     answers['stress'] = askRating(msg['stress-questionaire'])
     answers['valence'] = askRating(msg['valence-questionaire'])
     answers['concentration'] = askRating(msg['concentration-questionaire'])
@@ -513,7 +503,7 @@ def showBeginningMessages():
     win.flip()
     event.waitKeys(keyList=params['continueKey'])
 
-def pause(sec): #sliders for feedback
+def pause(sec):
     win.color = params['white']
     twiceFlip()
     msg['pause'].draw()
@@ -529,13 +519,14 @@ def pause(sec): #sliders for feedback
 if __name__ == "__main__":
     init()
     showBeginningMessages()
-    # practice()
+    practice()
     clocks['experiment'].reset()
     while ongoing:
         firstTask()
         secondTask()
-        experiment['blockCount'] += 1
+        questionaire()
         pause(params['pauseDur'])
+        experiment['blockCount'] += 1
         if experiment['blockCount'] is params['nBlocks']:
             ongoing = False
     experiment['experimentDuration'] = clocks['experiment'].getTime()
