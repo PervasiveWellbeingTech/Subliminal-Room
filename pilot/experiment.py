@@ -218,6 +218,7 @@ def setupExperiment():
             'saveCount': 0,
             'blockCount': 0,
             'nback': {
+                'unixTimes': copy.deepcopy(listNBlocks),
                 'count': 0,
                 'lastShown': 0,
                 'responses': {
@@ -350,8 +351,6 @@ def nbackPractice():
         while clocks['trial'].getTime()<0 and len(keys) is 0:
             keys = event.getKeys(keyList=params['responseKeys'])
         responseTime = params['nback']['stimDur'] + clocks['trial'].getTime()
-        clocks['trial'].reset()
-        clocks['trial'].add(params['nback']['ISI'])
         resp = -1
         if len(keys) is 0: #did not respond
             responseTime = -1
@@ -369,10 +368,16 @@ def nbackPractice():
                     check.draw()
                 else: #wrong
                     cross.draw()
+                win.flip()
+                wait(clocks['trial'])
         win.flip()
+        clocks['trial'].reset()
+        clocks['trial'].add(params['nback']['ISI'])
         curStim += 1
         stimShown += 1
+    wait(clocks['trial'])
     experiment['nback']['lastShown'] = curStim #might be unneccesary as list is mallible
+    print('Practice completed.')
 
 def nback(practice = False):
     # FIXME: first n stim should not have correct rawResponses
@@ -382,6 +387,7 @@ def nback(practice = False):
     global experiment
     nbackCount = experiment['nback']['count']
     curStim = experiment['nback']['lastShown']
+    times = []
     stimShown = 0
     correct = 0
     wrong = 0
@@ -391,6 +397,7 @@ def nback(practice = False):
     win.color = experiment['colors'][nbackCount]
     twiceFlip()
     msg['nback-alert'].draw()
+    times.append(unixTime())
     clocks['trial'].reset()
     clocks['trial'].add(params['taskMessageTime'])
     win.flip()
@@ -411,8 +418,6 @@ def nback(practice = False):
         while clocks['trial'].getTime()<0 and len(keys) is 0:
             keys = event.getKeys(keyList=params['responseKeys'])
         responseTime = params['nback']['stimDur'] + clocks['trial'].getTime()
-        clocks['trial'].reset()
-        clocks['trial'].add(params['nback']['ISI'])
         resp = -1
         corrected = -1
         if len(keys) is 0: #did not respond
@@ -442,7 +447,11 @@ def nback(practice = False):
                     cross.draw()
                     wrong+=1
                     corrected = 0
+                win.flip()
+                wait(clocks['trial'])
         win.flip()
+        clocks['trial'].reset()
+        clocks['trial'].add(params['nback']['ISI'])
         rawResponses.append(resp)
         correctedResponses.append(corrected)
         responseTimes.append(responseTime)
@@ -450,6 +459,7 @@ def nback(practice = False):
         stimShown += 1
     wait(clocks['trial'])
     win.flip()
+    times.append(unixTime())
     print("Correct ratio = {}%".format(correct/stimShown * 100))
     print("Wrong ratio = {}%".format(wrong/stimShown * 100))
     print("No response ratio = {}%".format((stimShown - correct - wrong)/stimShown * 100))
@@ -458,6 +468,7 @@ def nback(practice = False):
     experiment['nback']['responseTimes'][nbackCount] = responseTimes
     experiment['nback']['responses']['raw'][nbackCount] = rawResponses
     experiment['nback']['responses']['corrected'][nbackCount] = correctedResponses
+    experiment['nback']['unixTimes'][nbackCount] = times
     experiment['nback']['count'] += 1
     saveExperiment('nback completed')
 
@@ -479,7 +490,7 @@ def askRating(msg):
     ratingScale.reset()
     return rating
 
-def questionaire(nback):
+def questionaire():
     global experiment
     clocks['block'].reset()
     clocks['block'].add(params['questionaireDur'])
@@ -525,8 +536,8 @@ if __name__ == "__main__":
         firstTask()
         secondTask()
         questionaire()
-        pause(params['pauseDur'])
         experiment['blockCount'] += 1
+        pause(params['pauseDur'])
         if experiment['blockCount'] is params['nBlocks']:
             ongoing = False
     experiment['experimentDuration'] = clocks['experiment'].getTime()
