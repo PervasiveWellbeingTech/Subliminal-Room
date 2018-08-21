@@ -565,7 +565,8 @@ def pause(sec):
 
 init()
 showBeginningMessages()
-practice()
+if not testing:
+    practice()
 clocks['experiment'].reset()
 while ongoing:
     firstTask()
