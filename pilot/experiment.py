@@ -151,7 +151,6 @@ def setupParameters():
             'white': [0.0, 0.0, 1.0],
             'taskMessageTime': 2,
             'practiceDur': 10 if testing else 1 * 60,
-            'questionaireDur': 10 if testing else 1 * 30,
             'preQuestionaireDur': 2,
 
         }
@@ -197,14 +196,50 @@ def load(loadId):
 def setupExperiment():
     global experiment
     if newExperiment:
-        colors = []
-        for h in params['hues']:
-            for s in params['saturations']:
-                for v in params['values']:
-                    c = [h, s, v]
-                    colors.append(c)
+        # colors = []
+        # for h in params['hues']:
+        #     for s in params['saturations']:
+        #         for v in params['values']:
+        #             c = [h, s, v]
+        #             colors.append(c)
 
-        colors.append(params['white'])
+        # colors.append(params['white'])
+        colors = [
+              240.0,
+              1.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              1.0
+            ],
+            [
+              120.0,
+              0.5,
+              1.0
+            ],
+            [
+              0.0,
+              0.5,
+              1.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              240.0,
+              0.5,
+              1.0
+            ],
+            [
+              120.0,
+              1.0,
+              1.0
+            ]
+            ]
         listNBlocks = [[]] * params['nBlocks']
         zeroNBlocks = [0] * params['nBlocks']
         questionaire = [None] * params['nBlocks']
@@ -249,7 +284,7 @@ def randomize():
     global secondTask
     global experiment
     experiment['firstArithmetic'] = random.random() < .5
-    random.shuffle(experiment['colors'])
+    # random.shuffle(experiment['colors'])
     (firstTask, secondTask) = (arithmetic, nback) if experiment['firstArithmetic'] else (nback, arithmetic)
 
 def createOutputDir():
@@ -493,8 +528,6 @@ def askRating(msg):
 
 def questionaire():
     global experiment
-    clocks['block'].reset()
-    clocks['block'].add(params['questionaireDur'])
     answers = experiment['questionaire'][experiment['blockCount']]
     answers['stress'] = askRating(msg['stress-questionaire'])
     answers['valence'] = askRating(msg['valence-questionaire'])
