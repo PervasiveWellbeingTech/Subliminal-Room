@@ -204,7 +204,7 @@ def setupExperiment():
         #             colors.append(c)
 
         # colors.append(params['white'])
-        colors = [
+        colors = [[
               240.0,
               1.0,
               1.0
