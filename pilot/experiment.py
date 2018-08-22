@@ -6,7 +6,7 @@ import datetime
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 from psychopy import visual, core, sound, logging, event, clock
-import controller as hue
+# import controller as hue
 import random
 import copy
 import os
@@ -205,7 +205,7 @@ def setupExperiment():
 
         # colors.append(params['white'])
         colors = [[
-              12.0,
+              120.0,
               1.0,
               1.0
             ],
