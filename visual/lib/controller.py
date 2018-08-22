@@ -49,7 +49,7 @@ def make_command(rgb, brightness = 255, transition = 0):
     }
     return command
 
-def init(bridge_ip = '192.168.1.3', gamut = GamutC):
+def init(bridge_ip = '192.168.1.2', gamut = GamutC):
     # print(bridge_ip)
     global converter, b, group, go
     converter = Converter(gamut)
@@ -61,18 +61,19 @@ def init(bridge_ip = '192.168.1.3', gamut = GamutC):
     # print(go)
     # print(group)
 
-# def test():
-#     init()
-#     # g1.on = True
-#     # print(g1.transitiontime)
-#     cmds = []
-#     cmds.append(make_command(255, 230, 240, 255, 1))
-#     cmds.append(make_command(255, 0, 0))
-#     cmds.append(make_command(0, 255, 0))
-#     cmds.append(make_command(0, 0, 255))
-#     i = 0
-#     while True:
-#         set_group(cmds[i%3], group)
-#         i += 1
-#         print(i)
-# test()
+def test():
+    init()
+    group.on = True
+    # print(g1.transitiontime)
+    # cmds = []
+    # cmds.append(make_command(255, 230, 240, 255, 1))
+    # cmds.append(make_command(255, 0, 0))
+    # cmds.append(make_command(0, 255, 0))
+    # cmds.append(make_command(0, 0, 255))
+    set_group(make_command([255, 200, 255], 255))
+    # i = 0
+    # while True:
+    #     set_group(cmds[i%3], group)
+    #     i += 1
+    #     print(i)
+test()
