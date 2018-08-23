@@ -138,7 +138,7 @@ def setupParameters():
             'initialScreenColor':[0.0, 0.0, 1.0],
             'path': libs.path,
             'pauseDur': 5 if testing else 30,
-            'promptDir': '/pilot/prompts/',  # directory containing prompts and questions files
+            'promptDir': '/pilot/input/prompts/',  # directory containing prompts and questions files
             'resolution': [1920, 1080],
             'respAdvances': True,     # will a response end the stimulus?
             'responseKeys': ['space', 'backspace', 'q', 'r'],
