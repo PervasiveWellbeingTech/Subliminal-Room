@@ -4,9 +4,13 @@ import json
 import os
 
 outputDir = libs.path + 'pilot/output'
-# cur = sum(os.path.isdir(
-# os.path.join(outputDir, i)) for i in os.listdir(outputDir))
-# participants = []
+participants = {}
+
 for i in os.listdir(outputDir):
     if os.path.isdir(os.path.join(outputDir, i)) and i is not 'test':
-        print i
+        participants[i] = {
+        'dir': os.path.join(outputDir, i)
+        }
+
+for participant in participants:
+    
