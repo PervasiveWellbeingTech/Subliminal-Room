@@ -63,7 +63,7 @@ def init(bridge_ip = '192.168.1.2', gamut = GamutC):
 
 def test():
     init()
-    group.on = True
+    group.on = False
     # print(g1.transitiontime)
     # cmds = []
     # cmds.append(make_command(255, 230, 240, 255, 1))
