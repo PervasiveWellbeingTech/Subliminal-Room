@@ -129,14 +129,16 @@ for i in participants:
     populateColorAnalysisPerParticipant(p)
     # pprint(p['analysis'])
     # print
-    f, ax = plt.subplots(p['params']['nBlocks'], 3, sharex='col')
+    f, ax = plt.subplots(p['params']['nBlocks'], 4, sharex='col')
     f.set_size_inches(10, 10)
     ax[0, 0].set_title('Response Time')
-    ax[0, 1].set_title('Accuracy')
+    ax[0, 1].set_title('Num. correct')
     ax[0, 2].set_title('HR')
+    ax[0, 3].set_title('BR')
     ax[p['params']['nBlocks']-1, 0].set_xlabel('t (s)')
     ax[p['params']['nBlocks']-1, 1].set_xlabel('-1: missed, 0: wrong, 1: correct')
     ax[p['params']['nBlocks']-1, 2].set_xlabel('BPM')
+    ax[p['params']['nBlocks']-1, 3].set_xlabel('BPM')
     f.suptitle(i, fontsize=12, y=1.0, x=0.05)
     f.tight_layout()
     for n in range(p['params']['nBlocks']):
@@ -146,10 +148,17 @@ for i in participants:
         if rgb == (1.0, 1.0, 1.0):
             rgb = (0.0, 0.0, 0.0)
         ax[n, 0].hist(p['experiment']['nback']['responseTimes'][n], color=rgb, lw=0, bins=[-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0])
+        ax[n, 0].axvline(x=p['analysis'][colorToText(p['experiment']['colors'][n])]['responseTimes']['mean'])
         ax[n, 1].hist(p['experiment']['nback']['responses']['corrected'][n], color=rgb, lw=0, bins=[-1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.50, 0.75, 1.0])
+        ax[n, 1].axvline(x=p['analysis'][colorToText(p['experiment']['colors'][n])]['accuracy']['mean'])
         ax[n, 2].hist(p['measurements']['nback'][n]['HR'], color='black', bins=[62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110])
+        ax[n, 3].hist(p['measurements']['nback'][n]['BR'], color='black')
         ax[n, 0].set_ylim([0, 50])
         ax[n, 1].set_ylim([0, 120])
+        ax[n, 2].set_ylim([0, 100])
+        ax[n, 3].set_ylim([0, 150])
+    # break
+    f.savefig('pilot/analysis/{}.png'.format(i))
 
-plt.show()
+# plt.show()
 # print colorToText([120.0, 0.5, 1.0])
