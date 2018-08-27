@@ -158,7 +158,7 @@ for i in participants:
         ax[n, 2].set_ylim([0, 100])
         ax[n, 3].set_ylim([0, 150])
     # break
-    f.savefig('pilot/analysis/{}.png'.format(i))
+    # f.savefig('pilot/analysis/{}.png'.format(i))
 
-# plt.show()
+plt.show()
 # print colorToText([120.0, 0.5, 1.0])
