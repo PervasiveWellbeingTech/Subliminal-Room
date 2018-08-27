@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 import libs
-import warnings
 import datetime
-warnings.filterwarnings("ignore", message="numpy.dtype size changed")
-warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 from psychopy import visual, core, sound, logging, event, clock
 # import controller as hue
 import random

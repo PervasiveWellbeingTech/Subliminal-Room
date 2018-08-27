@@ -2,6 +2,7 @@ import sys
 import signal
 import platform
 import getpass
+import warnings
 username = getpass.getuser()
 paths = {'Darwin': '/Users/{}/dev/pervasivetech/Room/'.format(username),
         'Windows': 'C:/Users/{}/dev/pervasivetech/Room/'.format(username)}
@@ -19,3 +20,5 @@ def signal_handler(sig, frame):
     sys.exit(0)
     exit()
 signal.signal(signal.SIGINT, signal_handler)
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
