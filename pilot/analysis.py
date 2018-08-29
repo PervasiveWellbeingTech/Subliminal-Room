@@ -13,8 +13,10 @@ import pandas
 from calendar import timegm
 outputDir = libs.path + 'pilot/output'
 participants = {}
+aggregate = {}
+timezone = -7
 def epoch(str):
-    return timegm(time.strptime(str, '%d/%m/%Y %H:%M:%S.%f')) + 7 * 60 * 60
+    return timegm(time.strptime(str, '%d/%m/%Y %H:%M:%S.%f')) - (timezone * 60 * 60)
 
 def init():
     global participants
@@ -107,7 +109,7 @@ def responseTimeAnalysis(p):
         'sd': 0.0,
         }
         sum = 0.0
-        c = 0
+        c = 0.0
         for x in p['experiment']['nback']['responseTimes'][i]:
             sum += x
             c += 1
@@ -123,42 +125,177 @@ def populateColorAnalysisPerParticipant(p):
     accuracyAnalysis(p)
     responseTimeAnalysis(p)
 
-init()
-for i in participants:
-    p = participants[i]
-    populateColorAnalysisPerParticipant(p)
-    # pprint(p['analysis'])
-    # print
-    f, ax = plt.subplots(p['params']['nBlocks'], 4, sharex='col')
+def participantFigures():
+    for i in participants:
+        p = participants[i]
+        f, ax = plt.subplots(p['params']['nBlocks'], 4, sharex='col')
+        f.set_size_inches(10, 10)
+        ax[0, 0].set_title('Response Time')
+        ax[0, 1].set_title('Num. correct')
+        ax[0, 2].set_title('HR')
+        ax[0, 3].set_title('BR')
+        ax[p['params']['nBlocks']-1, 0].set_xlabel('t (s)')
+        ax[p['params']['nBlocks']-1, 1].set_xlabel('-1: missed, 0: wrong, 1: correct')
+        ax[p['params']['nBlocks']-1, 2].set_xlabel('BPM')
+        ax[p['params']['nBlocks']-1, 3].set_xlabel('BPM')
+        f.suptitle(i, fontsize=12, y=1.0, x=0.05)
+        f.tight_layout()
+        for n in range(p['params']['nBlocks']):
+            c = p['experiment']['colors'][n]
+            rgb = colorsys.hsv_to_rgb(c[0]/360.0, c[1], c[2])
+            # print rgb
+            if rgb == (1.0, 1.0, 1.0):
+                rgb = (0.0, 0.0, 0.0)
+            ax[n, 0].hist(p['experiment']['nback']['responseTimes'][n], color=rgb, lw=0, bins=[-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0])
+            ax[n, 0].axvline(x=p['analysis'][colorToText(p['experiment']['colors'][n])]['responseTimes']['mean'])
+            ax[n, 1].hist(p['experiment']['nback']['responses']['corrected'][n], color=rgb, lw=0, bins=[-1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.50, 0.75, 1.0])
+            ax[n, 1].axvline(x=p['analysis'][colorToText(p['experiment']['colors'][n])]['accuracy']['mean'])
+            ax[n, 2].hist(p['measurements']['nback'][n]['HR'], color='black', bins=[62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110])
+            ax[n, 3].hist(p['measurements']['nback'][n]['BR'], color='black')
+            ax[n, 0].set_ylim([0, 50])
+            ax[n, 1].set_ylim([0, 120])
+            ax[n, 2].set_ylim([0, 100])
+            ax[n, 3].set_ylim([0, 150])
+
+def aggregateAnalysis():
+    global aggregate
+    aggregate['data'] = {}
+    agg = aggregate['data']
+    for i in participants:
+        p = participants[i]
+        n = p['params']['nBlocks']
+        for j in range(n):
+            c = colorToText(p['experiment']['colors'][j])
+            if c in agg:
+                agg[c]['responses'] = agg[c]['responses'] + p['experiment']['nback']['responses']['corrected'][j]
+                agg[c]['responseTimes'] = agg[c]['responseTimes'] + p['experiment']['nback']['responseTimes'][j]
+                agg[c]['measurements'] = pandas.concat([agg[c]['measurements'], p['measurements']['nback'][j]])
+            else:
+                agg[c] = {}
+                agg[c]['color'] = p['experiment']['colors'][j]
+                agg[c]['responseTimes'] = list(p['experiment']['nback']['responseTimes'][j])
+                agg[c]['responses'] = list(p['experiment']['nback']['responses']['corrected'][j])
+                agg[c]['measurements'] = p['measurements']['nback'][j].copy()
+    aggregate['n'] = len(agg)
+    for i in agg:
+        c = agg[i]
+        sumResponseTimes = 0.0
+        countResponseTimes  = 0.0
+        for x in c['responseTimes']:
+            sumResponseTimes += x
+            countResponseTimes += 1
+        meanResponseTimes = sumResponseTimes/countResponseTimes
+        sumResponses = 0.0
+        countResponses  = 0.0
+        for x in c['responses']:
+            sumResponses += x
+            countResponses += 1
+        if not (countResponses  == countResponseTimes):
+            raise ValueError('counts do not match')
+        meanResponses = sumResponses/countResponses
+        sumResponseTimes = 0.0
+        sumResponses = 0.0
+        for x in c['responseTimes']:
+            sumResponseTimes += (x - meanResponseTimes) * (x- meanResponseTimes)
+        sdResponseTimes = math.sqrt(sumResponseTimes/(countResponseTimes-1))
+        for x in c['responses']:
+            sumResponses += (x - meanResponses) * (x- meanResponses)
+        sdResponses = math.sqrt(sumResponses/(countResponses-1))
+        sumHR = 0.0
+        countHR = 0.0
+        for x in c['measurements']['HR']:
+            sumHR+=x
+            countHR+=1
+        meanHR = sumHR / countHR
+        sumBR = 0.0
+        countBR = 0.0
+        for x in c['measurements']['BR']:
+            sumBR+=x
+            countBR+=1
+        meanBR = sumBR / countBR
+        sumHR = 0.0
+        sumBR = 0.0
+        for x in c['measurements']['HR']:
+            sumHR += (x-meanHR) * (x-meanHR)
+        sdHR = math.sqrt(sumHR/(countHR-1))
+        for x in c['measurements']['BR']:
+            sumBR += (x-meanBR) * (x-meanBR)
+        sdBR = math.sqrt(sumBR/(countBR-1))
+
+        c['analysis'] = {
+            'responseTimes': {
+                'mean': meanResponseTimes,
+                'sd' : sdResponseTimes
+            },
+            'responses': {
+                'mean': meanResponses,
+                'sd' : sdResponses
+            },
+            'HR': {
+                'mean': meanHR,
+                'sd' : sdHR
+            },
+            'BR':{
+                'mean': meanBR,
+                'sd' : sdBR
+            }
+        }
+
+def aggregateFigure():
+    f, ax = plt.subplots(aggregate['n'], 4, sharex='col')
     f.set_size_inches(10, 10)
     ax[0, 0].set_title('Response Time')
     ax[0, 1].set_title('Num. correct')
     ax[0, 2].set_title('HR')
     ax[0, 3].set_title('BR')
-    ax[p['params']['nBlocks']-1, 0].set_xlabel('t (s)')
-    ax[p['params']['nBlocks']-1, 1].set_xlabel('-1: missed, 0: wrong, 1: correct')
-    ax[p['params']['nBlocks']-1, 2].set_xlabel('BPM')
-    ax[p['params']['nBlocks']-1, 3].set_xlabel('BPM')
-    f.suptitle(i, fontsize=12, y=1.0, x=0.05)
+    ax[aggregate['n']-1, 0].set_xlabel('t (s)')
+    ax[aggregate['n']-1, 1].set_xlabel('-1: missed, 0: wrong, 1: correct')
+    ax[aggregate['n']-1, 2].set_xlabel('BPM')
+    ax[aggregate['n']-1, 3].set_xlabel('BPM')
+    # f.suptitle('Aggregate', fontsize=12, y=1.0, x=0.05)
     f.tight_layout()
-    for n in range(p['params']['nBlocks']):
-        c = p['experiment']['colors'][n]
+    n = 0
+    for i in aggregate['data']:
+        agg = aggregate['data'][i]
+        c = agg['color']
         rgb = colorsys.hsv_to_rgb(c[0]/360.0, c[1], c[2])
         # print rgb
         if rgb == (1.0, 1.0, 1.0):
             rgb = (0.0, 0.0, 0.0)
-        ax[n, 0].hist(p['experiment']['nback']['responseTimes'][n], color=rgb, lw=0, bins=[-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0])
-        ax[n, 0].axvline(x=p['analysis'][colorToText(p['experiment']['colors'][n])]['responseTimes']['mean'])
-        ax[n, 1].hist(p['experiment']['nback']['responses']['corrected'][n], color=rgb, lw=0, bins=[-1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.50, 0.75, 1.0])
-        ax[n, 1].axvline(x=p['analysis'][colorToText(p['experiment']['colors'][n])]['accuracy']['mean'])
-        ax[n, 2].hist(p['measurements']['nback'][n]['HR'], color='black', bins=[62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110])
-        ax[n, 3].hist(p['measurements']['nback'][n]['BR'], color='black')
-        ax[n, 0].set_ylim([0, 50])
-        ax[n, 1].set_ylim([0, 120])
-        ax[n, 2].set_ylim([0, 100])
-        ax[n, 3].set_ylim([0, 150])
-    # break
-    # f.savefig('pilot/analysis/{}.png'.format(i))
+        # ax[n, 0].hist(agg['responseTimes'], color=rgb, lw=0, bins=[-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0])
+        ax[n, 0].hist(agg['responseTimes'], color=rgb, lw=0, bins=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0])
+
+        ax[n, 0].axvline(x=agg['analysis']['responseTimes']['mean'])
+        ax[n, 0].axvline(x=agg['analysis']['responseTimes']['mean'] - agg['analysis']['responseTimes']['sd'], color='gray')
+        ax[n, 0].axvline(x=agg['analysis']['responseTimes']['mean'] + agg['analysis']['responseTimes']['sd'], color='gray')
+        ax[n, 1].hist(agg['responses'], color=rgb, lw=0, bins=[-1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.50, 0.75, 1.0])
+        ax[n, 1].axvline(x=agg['analysis']['responses']['mean'])
+        ax[n, 2].hist(agg['measurements']['HR'], color='black', bins=[62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110])
+        ax[n, 2].axvline(x=agg['analysis']['HR']['mean'])
+        ax[n, 2].axvline(x=agg['analysis']['HR']['mean'] - agg['analysis']['HR']['sd'], color='gray')
+        ax[n, 2].axvline(x=agg['analysis']['HR']['mean'] + agg['analysis']['HR']['sd'], color='gray')
+        ax[n, 3].hist(agg['measurements']['BR'], color='black')
+        ax[n, 3].axvline(x=agg['analysis']['BR']['mean'])
+        ax[n, 3].axvline(x=agg['analysis']['BR']['mean'] - agg['analysis']['BR']['sd'], color='gray')
+        ax[n, 3].axvline(x=agg['analysis']['BR']['mean'] + agg['analysis']['BR']['sd'], color='gray')
+
+        ax[n, 0].set_ylim([0, 150])
+        ax[n, 1].set_ylim([0, 750])
+        ax[n, 2].set_ylim([0, 275])
+        ax[n, 3].set_ylim([0, 750])
+        n+=1
+
+
+
+
+init()
+for i in participants:
+    p = participants[i]
+    populateColorAnalysisPerParticipant(p)
+aggregateAnalysis()
+# pprint(aggregate)
+aggregateFigure()
+# participantFigures()
 
 plt.show()
 # print colorToText([120.0, 0.5, 1.0])
