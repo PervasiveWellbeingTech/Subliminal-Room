@@ -266,18 +266,18 @@ def aggregateFigure():
         ax[n, 0].hist(agg['responseTimes'], color=rgb, lw=0, bins=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0])
 
         ax[n, 0].axvline(x=agg['analysis']['responseTimes']['mean'])
-        ax[n, 0].axvline(x=agg['analysis']['responseTimes']['mean'] - agg['analysis']['responseTimes']['sd'], color='gray')
-        ax[n, 0].axvline(x=agg['analysis']['responseTimes']['mean'] + agg['analysis']['responseTimes']['sd'], color='gray')
+        # ax[n, 0].axvline(x=agg['analyis']['responseTimes']['mean'] - agg['analysis']['responseTimes']['sd'], color='gray')
+        # ax[n, 0].axvline(x=agg['analysis]['responseTimes']['mean'] + agg['analysis']['responseTimes']['sd'], color='gray')
         ax[n, 1].hist(agg['responses'], color=rgb, lw=0, bins=[-1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.50, 0.75, 1.0])
         ax[n, 1].axvline(x=agg['analysis']['responses']['mean'])
         ax[n, 2].hist(agg['measurements']['HR'], color='black', bins=[62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110])
         ax[n, 2].axvline(x=agg['analysis']['HR']['mean'])
-        ax[n, 2].axvline(x=agg['analysis']['HR']['mean'] - agg['analysis']['HR']['sd'], color='gray')
-        ax[n, 2].axvline(x=agg['analysis']['HR']['mean'] + agg['analysis']['HR']['sd'], color='gray')
+        # ax[n, 2].axvline(x=agg['analysis']['HR']['mean'] - agg['analysis']['HR']['sd'], color='gray')
+        # ax[n, 2].axvline(x=agg['analysis']['HR']['mean'] + agg['analysis']['HR']['sd'], color='gray')
         ax[n, 3].hist(agg['measurements']['BR'], color='black')
         ax[n, 3].axvline(x=agg['analysis']['BR']['mean'])
-        ax[n, 3].axvline(x=agg['analysis']['BR']['mean'] - agg['analysis']['BR']['sd'], color='gray')
-        ax[n, 3].axvline(x=agg['analysis']['BR']['mean'] + agg['analysis']['BR']['sd'], color='gray')
+        # ax[n, 3].axvline(x=agg['analysis']['BR']['mean'] - agg['analysis']['BR']['sd'], color='gray')
+        # ax[n, 3].axvline(x=agg['analysis']['BR']['mean'] + agg['analysis']['BR']['sd'], color='gray')
 
         ax[n, 0].set_ylim([0, 150])
         ax[n, 1].set_ylim([0, 750])
@@ -285,17 +285,70 @@ def aggregateFigure():
         ax[n, 3].set_ylim([0, 750])
         n+=1
 
+def questionaireAnalysis():
+    global aggregate
+    for i in participants:
+        p = participants[i]
+        for j in range(p['params']['nBlocks']):
+            c = p['experiment']['colors'][j]
+            agg = aggregate['data'][colorToText(c)]
+            if 'questionaire' in agg:
+                agg['questionaire']['stress'].append(p['experiment']['questionaire'][j]['stress'])
+                agg['questionaire']['valence'].append(p['experiment']['questionaire'][j]['valence'])
+                agg['questionaire']['concentration'].append(p['experiment']['questionaire'][j]['concentration'])
+                agg['questionaire']['n']+=1
+            else:
+                agg['questionaire']= {
+                    'stress': [p['experiment']['questionaire'][j]['stress']],
+                    'valence': [p['experiment']['questionaire'][j]['valence']],
+                    'concentration': [p['experiment']['questionaire'][j]['concentration']],
+                    'n': 1
+                }
+    # for i in aggregate['data']:
+    #     x = aggregate['data'][i]
+    #     x['questionaire']['stress'] /= x['questionaire']['n']
+    #     x['questionaire']['valence'] /= x['questionaire']['n']
+    #     x['questionaire']['concentration'] /= x['questionaire']['n']
+        # print x['questionaire']
 
-
-
+def questionaireFigure():
+        f, ax = plt.subplots(aggregate['n'], 3, sharex=True)
+        f.set_size_inches(10, 10)
+        ax[0, 0].set_title('Stress')
+        ax[0, 1].set_title('Valence')
+        ax[0, 2].set_title('Concentration')
+        ax[aggregate['n']-1, 1].set_xlabel('Subjective rating')
+        # f.suptitle('Aggregate', fontsize=12, y=1.0, x=0.05)
+        f.tight_layout()
+        n = 0
+        for i in aggregate['data']:
+            agg = aggregate['data'][i]
+            c = agg['color']
+            rgb = colorsys.hsv_to_rgb(c[0]/360.0, c[1], c[2])
+            # print rgb
+            if rgb == (1.0, 1.0, 1.0):
+                rgb = (0.0, 0.0, 0.0)
+            ax[n, 0].hist(x=agg['questionaire']['stress'], color=rgb)
+            ax[n, 1].hist(x=agg['questionaire']['valence'], color=rgb)
+            ax[n, 2].hist(x=agg['questionaire']['concentration'], color=rgb)
+            # ax[n, 0].set_ylim([0, 1])
+            ax[n, 0].set_xlim([0.0, 10.0])
+            # ax[n, 1].set_ylim([0, 1])
+            ax[n, 1].set_xlim([0.0, 10.0])
+            # ax[n, 2].set_ylim([0, 1])
+            ax[n, 2].set_xlim([0.0, 10.0])
+            n+=1
 init()
 for i in participants:
     p = participants[i]
     populateColorAnalysisPerParticipant(p)
 aggregateAnalysis()
+questionaireAnalysis()
+# print aggregate['data']
+# exit()
 # pprint(aggregate)
-aggregateFigure()
+# aggregateFigure()
 # participantFigures()
-
+questionaireFigure()
 plt.show()
 # print colorToText([120.0, 0.5, 1.0])
