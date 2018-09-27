@@ -106,7 +106,7 @@ def change_state(fan_volume=None, box_status=None, fan_speeds=[None,None,None,No
     STATE = payload
 
 def test():
-    init('kdonbekci@gmail.com', 'Donbek2003')
+    # init(...) 
     # print('a')
     # change_state(fan_volume=80, box_status=1, fan_speeds=[100,0,0,0], fan_states=[True,False,False,False])
     # time.sleep(10)

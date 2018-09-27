@@ -8,8 +8,8 @@ paths = {'Darwin': '/Users/{}/dev/pervasivetech/Room/'.format(username),
         'Windows': 'C:/Users/{}/dev/pervasivetech/Room/'.format(username)}
 OS = platform.system()
 path = paths[OS]
-sys.path.insert(0, path+'visual/lib')
-sys.path.insert(0, path+'audiotory/lib')
+sys.path.insert(0, path+'vision/lib')
+sys.path.insert(0, path+'auditory/lib')
 sys.path.insert(0, path+'tactile/lib')
 sys.path.insert(0, path+'olfactory/lib')
 sys.path.insert(0, path+'monitor/lib')

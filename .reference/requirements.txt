@@ -9,5 +9,3 @@ cffi sounddevice
 
 pyo audio for psychopy:
 http://ajaxsoundstudio.com/software/pyo/
-
-Matlab API for python:
