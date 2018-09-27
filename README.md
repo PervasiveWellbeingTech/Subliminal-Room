@@ -23,7 +23,7 @@ You will need the listed requirements in
 ```
 .reference/requirements.txt
 ```
-and additionally follow the protocol to be able to run the experiment.
+and additionally follow the [protocol](https://docs.google.com/document/d/1F7-t7KGIc4zJZ2MrPT0B6_Eaof6T_vQGiSE-uxVb7GY/edit?usp=sharing) to be able to run the experiment.
 
 
 
